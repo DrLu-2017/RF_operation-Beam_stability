@@ -1,0 +1,17 @@
+[tool.poetry]
+name = "albums"
+version = "0.1.0"
+description = "An open-source Python package ALBuMS (Algortithms for Longitudinal Multibunch Beam Stability) for analytical studies of longitudinal beam instabilities in dual RF systems in synchrotron/storage ring particle accelerators."
+authors = ["Alexis Gamelin <alexis.gamelin@synchrotron-soleil.fr>"]
+readme = "README.md"
+
+[tool.poetry.dependencies]
+python = "^3.11"
+mbtrack2 = "^0.8.0"
+# your-github-dependency = { git = "https://github.com/lnls-fac/collective_effects.git", branch = "main" }
+
+
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"

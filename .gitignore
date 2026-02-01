@@ -1,0 +1,90 @@
+# Python
+*.pyc
+*.pyo
+*.pyd
+__pycache__/
+*.so
+*.egg
+*.egg-info/
+dist/
+build/
+*.whl
+
+# Virtual environments
+.venv/
+venv/
+ENV/
+env/
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# Jupyter
+*checkpoint.*
+*.ipynb_checkpoints/
+
+# Data and results
+data/
+results/
+*.csv
+*.h5
+*.hdf5
+*.pkl
+*.pickle
+
+# Logs
+*.log
+logs/
+
+# Temporary files
+tmp/
+temp/
+*.tmp
+*.bak
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Gemini AI assistant
+.gemini/
+
+# Docker
+*.tar
+*.tar.gz
+albums_v*.tar.gz
+albums-main.tar.gz
+albums-main-clean.tar.gz
+
+# Zone Identifier (Windows)
+*:Zone.Identifier
+
+# Build artifacts
+*.o
+*.a
+*.lib
+*.dll
+*.exe
+
+# Documentation build
+docs/_build/
+docs/build/
+
+# Test coverage
+.coverage
+htmlcov/
+.pytest_cache/
+
+# Downloaded dependencies (should be installed via requirements)
+mbtrack2-stable/
+mbtrack2-0.9.1/
+collective_effects/
+
+# Large files
+*.mp4
+*.avi
+*.mov
