@@ -19,24 +19,45 @@ ALADDIN_MAIN_CAVITY = {
     "voltage": 1.7,  # MV (increased to 1.7 MV as requested)
     "frequency": 499.654,  # MHz
     "harmonic": 32,
-    "Q": 40000,
+    "Q0": 40000,  # Unloaded Q
+    "Q": 40000,  # Q0 (for backward compatibility)
+    "QL": 6667,  # Loaded Q (estimated)
+    "Q_ext": 10000,  # External Q (estimated)
     "R_over_Q": 100,  # Ohms
+    "Rs": 4.0,  # Shunt impedance Rs = 4 MΩ / cav (estimated)
+    "Ncav": 1,  # Number of cavities
+    "beta": 5.0,  # Coupling factor β (estimated)
+    "detuning_khz": 0.0,  # Detuning frequency (kHz)
+    "rf_feedback_gain": 1.0,  # RF feedback gain (estimated)
+    "tau_us": 4.0,  # Cavity decay time (μs, estimated)
 }
 
 ALADDIN_HARMONIC_CAVITY_PASSIVE = {
     "voltage": 0.15,  # MV (150 kV - reasonable for passive cavity)
     "frequency": 1498.962,  # MHz (3rd harmonic)
     "harmonic": 96,
-    "Q": 20000,
+    "harmonic_number": 3,  # 3rd harmonic of main RF
+    "Q0": 20000,  # Unloaded Q
+    "Q": 20000,  # Q0 (for backward compatibility)
     "R_over_Q": 50,  # Ohms
+    "Rs": 1.0,  # Shunt impedance Rs = 1 MΩ / cav (estimated)
+    "Ncav": 1,  # Number of cavities
+    "beta": 0.0,  # Coupling factor β (passive cavity)
+    "tau_us": 5.0,  # Cavity decay time (μs, estimated)
 }
 
 ALADDIN_HARMONIC_CAVITY_ACTIVE = {
     "voltage": 0.3,  # MV
     "frequency": 1498.962,  # MHz (3rd harmonic)
     "harmonic": 96,
-    "Q": 20000,
+    "harmonic_number": 3,  # 3rd harmonic of main RF
+    "Q0": 20000,  # Unloaded Q
+    "Q": 20000,  # Q0 (for backward compatibility)
     "R_over_Q": 50,  # Ohms
+    "Rs": 1.0,  # Shunt impedance Rs = 1 MΩ / cav (estimated)
+    "Ncav": 1,  # Number of cavities
+    "beta": 1.0,  # Coupling factor β (active cavity)
+    "tau_us": 5.0,  # Cavity decay time (μs, estimated)
 }
 
 # SOLEIL II parameters (from SOLEIL II Lattice Review, January 2026)
@@ -62,11 +83,17 @@ SOLEIL_II_MAIN_CAVITY = {
     "voltage": 1.7,  # MV (Vrf = 1.7 MV total)
     "frequency": SOLEIL_II_RF_FREQ,  # MHz (352 MHz)
     "harmonic": 416,
-    "Q": 35700,  # Q0 = 35700
+    "Q0": 35700,  # Unloaded Q = 35700
+    "Q": 35700,  # Q0 = 35700 (for backward compatibility)
     "QL": 6000,  # Loaded Q
+    "Q_ext": 6364,  # External Q
     "Rs": 5.0,  # Shunt impedance Rs = 5 MΩ / cav
     "R_over_Q": 140.0,  # Rs/Q0 ≈ 5e6/35700 ≈ 140 Ohms
     "Ncav": 4,  # Number of cavities
+    "beta": 5.5,  # Coupling factor β
+    "detuning_khz": 0.0,  # Detuning frequency (kHz)
+    "rf_feedback_gain": 1.3,  # RF feedback gain
+    "tau_us": 4.87,  # Cavity decay time (μs)
 }
 
 # Passive Normal Conducting (NC) harmonic cavities (HC)
@@ -76,9 +103,13 @@ SOLEIL_II_HARMONIC_CAVITY = {
     "frequency": SOLEIL_II_HC_FREQ,  # MHz (1.41 GHz, 4th harmonic)
     "harmonic": 1664,  # 416 * 4 = 1664
     "harmonic_number": 4,  # 4th harmonic of main RF
-    "Q": 31000,  # Q0 = 31000
+    "Q0": 31000,  # Unloaded Q = 31000
+    "Q": 31000,  # Q0 = 31000 (for backward compatibility)
     "R_over_Q": 29.6,  # R/Q = 29.6 Ω / cav
+    "Rs": 0.92,  # Shunt impedance Rs = 0.92 MΩ / cav
     "Ncav": 3,  # Number of cavities (2 or 3)
+    "beta": 0.0,  # Coupling factor β (passive cavity)
+    "tau_us": 7.0,  # Cavity decay time (μs)
 }
 
 # Preset configurations
@@ -119,6 +150,32 @@ PRESETS = {
         "scan_params": {
             "psi_min": 1.0,   # degrees - wider range for SOLEIL II
             "psi_max": 180.0, # degrees
+            "psi_points": 50,
+        }
+    },
+    "SOLEIL II (Phase 1)": {
+        "ring": {**SOLEIL_II_RING, "energy_loss_per_turn": 0.000803},  # 803 keV (487 + 316)
+        "main_cavity": SOLEIL_II_MAIN_CAVITY,
+        "harmonic_cavity": SOLEIL_II_HARMONIC_CAVITY,
+        "current": 0.5,  # A
+        "passive_hc": True,
+        "operation_phase": "Phase 1",
+        "scan_params": {
+            "psi_min": 1.0,
+            "psi_max": 180.0,
+            "psi_points": 50,
+        }
+    },
+    "SOLEIL II (Phase 2)": {
+        "ring": {**SOLEIL_II_RING, "energy_loss_per_turn": 0.000846},  # 846 keV (487 + 359)
+        "main_cavity": SOLEIL_II_MAIN_CAVITY,
+        "harmonic_cavity": SOLEIL_II_HARMONIC_CAVITY,
+        "current": 0.5,  # A
+        "passive_hc": True,
+        "operation_phase": "Phase 2",
+        "scan_params": {
+            "psi_min": 1.0,
+            "psi_max": 180.0,
             "psi_points": 50,
         }
     },
