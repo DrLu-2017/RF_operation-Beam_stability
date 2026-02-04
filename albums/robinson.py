@@ -660,9 +660,10 @@ class RobinsonModes():
         for method in methods:
             try:
                 sol = root(f_dipole, x0, tol=1e-6, method=method)
-            except ValueError:
-                sol = {"success":False}
-            if sol["success"]:
+            except (ValueError, RuntimeError, RuntimeWarning) as e:
+                # Solver failed, try next method
+                sol = {"success": False}
+            if sol.get("success", False):
                 break
 
         if sol["success"]:
@@ -702,9 +703,10 @@ class RobinsonModes():
         for method in methods:
             try:
                 sol = root(f_quadrupole, x0, tol=1e-6, method=method)
-            except ValueError:
-                sol = {"success":False}
-            if sol["success"]:
+            except (ValueError, RuntimeError, RuntimeWarning) as e:
+                # Solver failed, try next method
+                sol = {"success": False}
+            if sol.get("success", False):
                 break
 
         if sol["success"]:
@@ -1113,7 +1115,23 @@ class RobinsonModes():
         HOM = None
         Omega = None
 
+        # Calculate Robinson frequency with NaN checking
         omega_r = self._robinson_frequency()
+        
+        # Check for invalid Robinson frequency (negative omega^2 in sqrt)
+        if np.isnan(omega_r) or omega_r <= 0:
+            # Invalid Robinson frequency indicates unstable configuration
+            # Return with converged=False to signal calculation failure
+            import warnings
+            warnings.warn(
+                "Invalid Robinson frequency detected (omega_r = {:.3e}). "
+                "This typically indicates incompatible cavity settings or "
+                "negative synchrotron frequency squared. "
+                "Check cavity voltages and phases.".format(omega_r),
+                RuntimeWarning
+            )
+            return (None, None, None, None, False)
+        
         landau = self._landau_threshold(omega_r, c, b)
 
         HOM = self._dipole_coupled_bunch(f_HOM, Z_HOM, bunch_length, omega_r, landau)

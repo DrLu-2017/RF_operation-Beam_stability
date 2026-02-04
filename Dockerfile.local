@@ -1,5 +1,6 @@
 # ALBuMS Streamlit Application - Complete Docker Image
 # Includes mbtrack2, pycolleff, and all dependencies
+# Uses local copies of mbtrack2 and pycolleff for reliability
 
 FROM python:3.10-slim
 
@@ -10,6 +11,7 @@ WORKDIR /app
 RUN apt-get update && apt-get install -y \
     build-essential \
     git \
+    curl \
     && rm -rf /var/lib/apt/lists/*
 
 # Copy requirements first for better caching
@@ -19,31 +21,43 @@ COPY requirements.txt requirements_streamlit.txt ./
 RUN pip install --no-cache-dir -r requirements.txt && \
     pip install --no-cache-dir -r requirements_streamlit.txt
 
-# Clone and install mbtrack2
-RUN git clone --depth 1 --branch v0.9.1 https://gitlab.synchrotron-soleil.fr/PA/collective-effects/mbtrack2.git /tmp/mbtrack2 || \
-    echo "Warning: Could not clone mbtrack2 from GitLab. Using fallback method." && \
-    pip install --no-cache-dir git+https://gitlab.synchrotron-soleil.fr/PA/collective-effects/mbtrack2.git@v0.9.1 || \
-    echo "mbtrack2 installation skipped - will need to be installed manually"
+# Copy mbtrack2 and pycolleff from local directories
+# These should be present in the build context
+COPY mbtrack2-stable /tmp/mbtrack2
+COPY collective_effects /tmp/collective_effects
 
-# If mbtrack2 was cloned, install it
-RUN if [ -d "/tmp/mbtrack2" ]; then \
-        cd /tmp/mbtrack2 && pip install --no-cache-dir -e . && cd / && rm -rf /tmp/mbtrack2; \
-    fi
-
-# Clone and install pycolleff
-RUN git clone --depth 1 https://github.com/lnls-fac/collective_effects.git /tmp/collective_effects && \
-    cd /tmp/collective_effects/pycolleff && \
+# Install mbtrack2
+RUN cd /tmp/mbtrack2 && \
     pip install --no-cache-dir -e . && \
-    cd / && rm -rf /tmp/collective_effects
+    echo "✓ mbtrack2 installed successfully"
+
+# Install pycolleff
+RUN cd /tmp/collective_effects/pycolleff && \
+    pip install --no-cache-dir -e . && \
+    echo "✓ pycolleff installed successfully"
+
+# Clean up temporary files
+RUN rm -rf /tmp/mbtrack2 /tmp/collective_effects
 
 # Copy application code
-COPY . .
+COPY albums ./albums
+COPY pages ./pages
+COPY utils ./utils
+COPY examples ./examples
+COPY docs ./docs
+COPY tests ./tests
+COPY streamlit_app.py .
+COPY .streamlit ./.streamlit
+COPY LICENSE README.md ./
+
+# Create data directory
+RUN mkdir -p /app/data
 
 # Expose Streamlit port
 EXPOSE 8501
 
 # Health check
-HEALTHCHECK --interval=30s --timeout=10s --start-period=5s --retries=3 \
+HEALTHCHECK --interval=30s --timeout=10s --start-period=40s --retries=3 \
     CMD curl -f http://localhost:8501/_stcore/health || exit 1
 
 # Set environment variables

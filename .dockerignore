@@ -1,0 +1,97 @@
+# Git
+.git
+.gitignore
+.gitattributes
+
+# Python
+__pycache__
+*.py[cod]
+*$py.class
+*.so
+.Python
+*.egg-info
+dist
+build
+
+# Virtual environments (don't include in Docker)
+.venv
+venv
+ENV
+env
+
+# IDE
+.vscode
+.idea
+*.swp
+*.swo
+*~
+
+# Jupyter
+.ipynb_checkpoints
+
+# Data and results (users will mount these)
+data/
+results/
+*.csv
+*.h5
+*.hdf5
+*.pkl
+*.pickle
+
+# Logs
+*.log
+logs/
+
+# Temporary files
+tmp/
+temp/
+*.tmp
+*.bak
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Gemini AI assistant
+.gemini/
+
+# Documentation build
+docs/_build/
+docs/build/
+
+# Test coverage
+.coverage
+htmlcov/
+.pytest_cache/
+
+# Large files
+*.mp4
+*.avi
+*.mov
+
+# Docker files (don't include in image)
+*.tar
+*.tar.gz
+albums-streamlit*.tar*
+Dockerfile.local
+docker-compose.yml
+
+# Git-related
+.gitlab-ci.yml
+.readthedocs.yaml
+
+# Build scripts (not needed in image)
+build_docker.sh
+build_complete_docker.sh
+sync_to_github.sh
+package.sh
+
+# Documentation (keep only essential docs)
+DOCKER_GUIDE.md
+GITHUB_SYNC_GUIDE.md
+INSTALLATION_GUIDE.md
+CLEANUP_SUMMARY.md
+SHARING_GUIDE.md
+
+# Zone Identifier
+*:Zone.Identifier

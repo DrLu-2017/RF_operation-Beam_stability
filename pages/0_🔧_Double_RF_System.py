@@ -396,6 +396,7 @@ rf_params = calculate_rf_feedback_params(f0_mhz, q0_fund, beta_fund, rf_gain)
 
 # --- THE COMPREHENSIVE ANALYSIS TABS ---
 tabs = st.tabs([
+    "📚 Physics Introduction",
     "Plot 1: Main Cavity Power",
     "Plot 2: Voltage Components",
     "Harmonic Cavity Analysis",
@@ -408,7 +409,119 @@ tabs = st.tabs([
     "Synchronous Phase Analysis"
 ])
 
-with tabs[0]:  # Plot 1: Main Cavity Power vs Current
+with tabs[0]:  # Physics Introduction
+    st.header("📚 Passive Harmonic Cavity & Beam Loading Physics")
+    
+    st.markdown("""
+    This page provides the theoretical foundation for understanding passive harmonic cavity systems 
+    and beam loading effects in storage rings.
+    """)
+    
+    # Section 1: Beam Current Spectral Components
+    st.markdown("---")
+    st.subheader("1. Beam Current Spectral Components")
+    
+    st.markdown("""
+    **Assumption:** The beam is a train of short bunches (Gaussian distribution) with bunch length 
+    $\\sigma_t \\ll T_{RF}$.
+    
+    **Relationship:**  
+    The RF component of the beam current ($I_{RF}$, driving the cavity) relates to the DC average 
+    beam current ($I_{DC}$) as:
+    """)
+    
+    st.latex(r"I_{RF} \approx 2 \cdot I_{DC} \cdot F_n")
+    
+    col1, col2 = st.columns([1, 1])
+    with col1:
+        st.info("""
+        **Where:**
+        - $F_n$ is the form factor
+        - For short bunches in storage rings, $F_n \\approx 1$
+        """)
+    
+    with col2:
+        st.success("""
+        **Key Constant:**  
+        The factor **2** arises from the Fourier expansion of a periodic Dirac-delta-like pulse train.
+        """)
+    
+    # Section 2: Passive Cavity Detuning Derivation
+    st.markdown("---")
+    st.subheader("2. Passive Cavity Detuning Derivation")
+    
+    st.markdown("""
+    **Objective:** Calculate required detuning $\\Delta f$ to maintain a specific induced voltage 
+    $V_{hc}$ at a given current $I_{DC}$.
+    """)
+    
+    # Variables table
+    st.markdown("**Variables:**")
+    variables_data = {
+        "Symbol": ["$V_{hc}$", "$R_{sh}$", "$\\psi$", "$Q_L$", "$f_r$"],
+        "Description": [
+            "Harmonic cavity voltage (induced)",
+            "Shunt impedance (Circuit definition, consistent with $P=V^2/2R$)",
+            "Tuning angle",
+            "Loaded Quality Factor",
+            "Resonant frequency"
+        ]
+    }
+    st.table(variables_data)
+    
+    st.markdown("---")
+    st.markdown("**Derivation Logic:**")
+    
+    # Step-by-step derivation
+    derivation_steps = [
+        ("1. Ohm's Law (Phasor)", r"|\tilde{V}_{hc}| = |\tilde{I}_{RF}| \cdot |\tilde{Z}|"),
+        ("2. Impedance Modulus", r"|\tilde{Z}| = R_{sh} \cos \psi"),
+        ("3. Substitution", r"V_{hc} = (2 I_{DC}) \cdot (R_{sh} \cos \psi)"),
+        ("4. Solve for Angle", r"\cos \psi = \frac{V_{hc}}{2 I_{DC} R_{sh}}"),
+    ]
+    
+    for step_num, (title, formula) in enumerate(derivation_steps, 1):
+        with st.container():
+            st.markdown(f"**{title}**")
+            st.latex(formula)
+            if step_num < len(derivation_steps):
+                st.markdown("")
+    
+    st.markdown("**5. Convert to Tangent**")
+    st.markdown("Using $\\tan \\psi = \\sqrt{\\frac{1}{\\cos^2 \\psi} - 1}$")
+    
+    st.latex(r"\tan \psi = \sqrt{ \left( \frac{2 I_{DC} R_{sh}}{V_{hc}} \right)^2 - 1 } = \sqrt{ \frac{4 I_{DC}^2 R_{sh}^2}{V_{hc}^2} - 1 }")
+    
+    st.markdown("---")
+    st.markdown("**6. Final Detuning Formula:**")
+    
+    # Highlight the final formula
+    st.success("**Key Result:**")
+    st.latex(r"\Delta f = \frac{f_r}{2 Q_L} \sqrt{ \frac{4 I_{DC}^2 R_{sh}^2}{V_{hc}^2} - 1 }")
+    
+    st.markdown("---")
+    st.warning("""
+    **Note on Factors:**  
+    The factor "4" in the numerator comes from squaring the factor "2" in the 
+    $I_{RF} \\approx 2I_{DC}$ relationship.
+    """)
+    
+    # Additional context
+    st.markdown("---")
+    st.info("""
+    ### Physical Interpretation
+    
+    This formula shows that:
+    - **Higher beam current** ($I_{DC}$) requires **larger detuning** to maintain the same voltage
+    - **Higher shunt impedance** ($R_{sh}$) requires **larger detuning** (more beam loading effect)
+    - **Higher cavity voltage** ($V_{hc}$) requires **smaller detuning** (less relative beam loading)
+    - **Higher loaded Q** ($Q_L$) requires **smaller detuning** (narrower bandwidth)
+    
+    The detuning compensates for the reactive component of the beam-induced voltage, 
+    ensuring the cavity operates at the desired voltage and phase.
+    """)
+
+with tabs[1]:  # Plot 1: Main Cavity Power vs Current
     fig1 = go.Figure()
     fig1.add_trace(go.Scatter(x=i_range, y=[s['p_inc'] for s in scans], name="Incident (Pi)", line=dict(color='blue')))
     fig1.add_trace(go.Scatter(x=i_range, y=[s['p_beam'] for s in scans], name="Beam (Pb)", line=dict(color='green')))
@@ -422,7 +535,7 @@ with tabs[0]:  # Plot 1: Main Cavity Power vs Current
     )
     st.plotly_chart(fig1, use_container_width=True)
 
-with tabs[1]:  # Plot 2: Voltage Components vs Phase
+with tabs[2]:  # Plot 2: Voltage Components vs Phase
     phi_deg = np.linspace(-180, 180, 1000)
     v_m = vfcav_kv * np.sin(np.radians(phi_deg + res['phi_s']))
     v_h = res['vh_opt'] * np.sin(np.radians(nh_harm * phi_deg))
@@ -440,7 +553,7 @@ with tabs[1]:  # Plot 2: Voltage Components vs Phase
     )
     st.plotly_chart(fig2, use_container_width=True)
 
-with tabs[2]:  # Harmonic Cavity Analysis
+with tabs[3]:  # Harmonic Cavity Analysis
     st.subheader("💠 Harmonic Cavity Analysis (n=4)")
     
     col_h1, col_h2, col_h3 = st.columns(3)
@@ -463,7 +576,7 @@ with tabs[2]:  # Harmonic Cavity Analysis
         st.latex(r"\phi_{h,\mathrm{opt}} = \frac{1}{n} \arcsin\left[\frac{-U_0}{V_{h,\mathrm{opt}} (n^2-1)}\right]")
         st.latex(r"\delta f_h = -\frac{f_{h0}}{Q_{h0}} \sqrt{\left(\frac{R_{h} \cdot I_{max}}{v_h \cdot n_{h,cav}}\right)^2 - \frac{1}{4}}")
 
-with tabs[3]:  # Detuning & Phase Analysis
+with tabs[4]:  # Detuning & Phase Analysis
     st.subheader("📊 Detuning & Phase Analysis")
     
     col_det1, col_det2, col_det3 = st.columns(3)
@@ -491,7 +604,7 @@ with tabs[3]:  # Detuning & Phase Analysis
     )
     st.plotly_chart(fig_det, use_container_width=True)
 
-with tabs[4]:  # Plot 3: Harmonic Cavity Power vs Current
+with tabs[5]:  # Plot 3: Harmonic Cavity Power vs Current
     fig3 = go.Figure()
     fig3.add_trace(go.Scatter(x=i_range, y=[s['ph_diss'] for s in scans], 
                              name="Ph_diss (per cavity)", line=dict(color='purple')))
@@ -504,7 +617,7 @@ with tabs[4]:  # Plot 3: Harmonic Cavity Power vs Current
     )
     st.plotly_chart(fig3, use_container_width=True)
 
-with tabs[5]:  # Energy Loss Analysis
+with tabs[6]:  # Energy Loss Analysis
     st.subheader("⚡ Energy Loss Analysis")
     
     col_e1, col_e2, col_e3 = st.columns(3)
@@ -525,7 +638,7 @@ with tabs[5]:  # Energy Loss Analysis
     )
     st.plotly_chart(fig_en, use_container_width=True)
 
-with tabs[6]:  # RF Feedback Control
+with tabs[7]:  # RF Feedback Control
     st.subheader("📡 RF Feedback Control - Cavity Bandwidth Analysis")
     
     col_rf1, col_rf2, col_rf3 = st.columns(3)
@@ -570,7 +683,7 @@ with tabs[6]:  # RF Feedback Control
     )
     st.plotly_chart(fig_bw, use_container_width=True)
 
-with tabs[7]:  # Plot 4: Potential Well Representation
+with tabs[8]:  # Plot 4: Potential Well Representation
     phi_pot, potential = calculate_potential_well(vfcav_kv, res['vh_opt'], res['phi_s'], nh_harm, res['ut0'])
     
     fig4 = go.Figure()
@@ -584,7 +697,7 @@ with tabs[7]:  # Plot 4: Potential Well Representation
     )
     st.plotly_chart(fig4, use_container_width=True)
 
-with tabs[8]:  # Plot 5: Reflection / Match Performance
+with tabs[9]:  # Plot 5: Reflection / Match Performance
     fig5 = go.Figure()
     fig5.add_trace(go.Scatter(x=i_range, y=[s['rho'] for s in scans], name="Reflection |ρ|", line=dict(color='red')))
     fig5.update_layout(
@@ -596,7 +709,7 @@ with tabs[8]:  # Plot 5: Reflection / Match Performance
     )
     st.plotly_chart(fig5, use_container_width=True)
 
-with tabs[9]:  # Synchronous Phase Analysis
+with tabs[10]:  # Synchronous Phase Analysis
     st.subheader("🔄 Synchronous Phase Analysis")
     
     col_p1, col_p2 = st.columns(2)

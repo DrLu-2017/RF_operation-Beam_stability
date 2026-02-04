@@ -1450,10 +1450,15 @@ def analyze_robinson_modes(ring, main_cavity, harmonic_cavity, current,
             "error": "ALBuMS module not available. Please check installation."
         }
     
-    if scan_modes is None:
+    # Import the internal scan function directly since scan_modes doesn't return results
+    try:
+        from albums.scan import initialize_arrays_1D
+        from albums.robinson import RobinsonModes
+        from tqdm import tqdm
+    except ImportError as e:
         return {
             "success": False,
-            "error": "scan_modes function not available"
+            "error": f"Failed to import required ALBuMS modules: {str(e)}"
         }
     
     try:
@@ -1490,22 +1495,39 @@ def analyze_robinson_modes(ring, main_cavity, harmonic_cavity, current,
         
         print(f"🔍 Running mode analysis with ALBuMS using {normalized_method} method...")
         
-        results = scan_modes(
-            MC=main_cavity,
-            HC=harmonic_cavity,
-            ring=ring,
-            psi_HC_vals=psi_vals_rad,
-            current=current,
-            mode_coupling=True,
-            tau_boundary=None,
-            method=normalized_method,
-            passive_harmonic_cavity=passive_hc
-        )
+        # Call __scan_1D directly (replicate its logic here to avoid import issues)
+        mode_coupling = True  # Always use mode coupling for comprehensive analysis
+        arrays = initialize_arrays_1D(psi_vals_rad, mode_coupling)
+        
+        for j, psi_HC in enumerate(tqdm(psi_vals_rad, desc="Mode Analysis")):
+            harmonic_cavity.psi = psi_HC
+            solver = RobinsonModes(ring, [main_cavity, harmonic_cavity], current, tau_boundary=None)
+            results = solver.solve(method=normalized_method, mode_coupling=mode_coupling, passive_harmonic_cavity=passive_hc)
+            (
+                bunch_length, zero_frequency, robinson, HOM, Omega, PTBL,
+                converged
+            ) = results
+
+            if not np.asarray(converged).any():
+                continue
+
+            arrays["zero_freq_coup"][j] = zero_frequency
+            arrays["robinson_coup"][j, :] = robinson
+            arrays["modes_coup"][j, :] = Omega
+            arrays["HOM_coup"][j] = HOM
+            arrays["converged_coup"][j, :] = converged
+            arrays["PTBL_coup"][j] = PTBL
+            arrays["bl"][j] = bunch_length * 1e12
+            arrays["xi"][j] = solver.xi
+            arrays["R"][j] = solver.R_factor(normalized_method)
+        
+        # Return results as tuple (matching __scan_1D output)
+        scan_results = tuple(arrays.values())
         
         return {
             "success": True,
             "psi_vals": psi_vals,
-            "results": results
+            "results": scan_results
         }
     except Exception as e:
         print(f"❌ Mode analysis error: {str(e)}")
@@ -1515,3 +1537,4 @@ def analyze_robinson_modes(ring, main_cavity, harmonic_cavity, current,
             "success": False,
             "error": f"Mode analysis error: {str(e)}"
         }
+

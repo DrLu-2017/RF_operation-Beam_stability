@@ -27,7 +27,8 @@ from utils.albums_wrapper import (
     create_cavity_from_params,
     analyze_robinson_modes
 )
-from utils.visualization import plot_mode_frequencies, plot_growth_rates
+from utils.visualization import plot_mode_frequencies, plot_growth_rates, plot_r_factor_vs_psi
+import plotly.graph_objects as go
 
 st.set_page_config(page_title="Mode Analysis", page_icon="🔬", layout="wide")
 
@@ -375,22 +376,143 @@ with tab3:
         if result['success']:
             st.success("✅ Mode Analysis Results")
             
-            st.info("📊 Mode tracking visualization will be displayed here.")
+            # Extract data from results
+            psi_vals = result['psi_vals']
+            scan_results = result['results']
             
-            # Display psi range
-            st.markdown("### Analysis Range")
-            col1, col2 = st.columns(2)
-            with col1:
-                st.metric("Psi Range", f"{result['psi_vals'][0]:.1f}° to {result['psi_vals'][-1]:.1f}°")
-            with col2:
-                st.metric("Number of Points", len(result['psi_vals']))
-            
-            # Placeholder for visualization
-            st.markdown("### Mode Frequencies")
-            st.info("💡 Mode frequency plots will show how Robinson modes evolve with harmonic cavity phase.")
-            
-            st.markdown("### Growth Rates")
-            st.info("💡 Growth rate plots will identify unstable regions and mode coupling phenomena.")
+            # scan_results is a tuple: (zero_freq_coup, robinson_coup, modes_coup, HOM_coup, xi, converged_coup, PTBL_coup, bl, R)
+            # Unpack the results
+            try:
+                (zero_freq_coup, robinson_coup, modes_coup, HOM_coup, xi, 
+                 converged_coup, PTBL_coup, bl, R) = scan_results
+                
+                # Display psi range
+                st.markdown("### Analysis Range")
+                col1, col2, col3 = st.columns(3)
+                with col1:
+                    st.metric("Psi Range", f"{psi_vals[0]:.1f}° to {psi_vals[-1]:.1f}°")
+                with col2:
+                    st.metric("Number of Points", len(psi_vals))
+                with col3:
+                    # Count converged points
+                    converged_count = np.sum(np.any(converged_coup, axis=1))
+                    st.metric("Converged Points", f"{converged_count}/{len(psi_vals)}")
+                
+                # Plot Mode Frequencies
+                st.markdown("### Mode Frequencies")
+                st.markdown("Evolution of Robinson mode frequencies with harmonic cavity phase.")
+                
+                # modes_coup shape: (n_psi, n_modes)
+                # Each column is a different mode
+                n_modes = modes_coup.shape[1]
+                mode_labels = [f"Mode {i+1}" for i in range(n_modes)]
+                
+                # Prepare mode frequency data (list of arrays, one per mode)
+                mode_frequencies = [modes_coup[:, i] for i in range(n_modes)]
+                
+                # Create and display the plot
+                fig_freq = plot_mode_frequencies(
+                    psi_vals, 
+                    mode_frequencies, 
+                    mode_labels=mode_labels,
+                    title="Robinson Mode Frequencies vs Harmonic Cavity Phase"
+                )
+                st.plotly_chart(fig_freq, use_container_width=True)
+                
+                # Plot Growth Rates
+                st.markdown("### Growth Rates")
+                st.markdown("Imaginary parts of mode frequencies indicate growth/damping rates.")
+                
+                # Extract imaginary parts (growth rates) from mode frequencies
+                # modes_coup contains complex frequencies: Re(omega) + i*Im(omega)
+                # Growth rate = Im(omega)
+                growth_rates = [np.imag(modes_coup[:, i]) for i in range(n_modes)]
+                
+                # Create and display the plot
+                fig_growth = plot_growth_rates(
+                    psi_vals,
+                    growth_rates,
+                    mode_labels=mode_labels,
+                    title="Mode Growth Rates vs Harmonic Cavity Phase"
+                )
+                st.plotly_chart(fig_growth, use_container_width=True)
+                
+                # Display instability summary
+                st.markdown("### Instability Summary")
+                col1, col2, col3, col4 = st.columns(4)
+                
+                with col1:
+                    dipole_unstable = np.sum(robinson_coup[:, 0])
+                    st.metric("Dipole Robinson", f"{dipole_unstable} points", 
+                             delta="Unstable" if dipole_unstable > 0 else "Stable",
+                             delta_color="inverse")
+                
+                with col2:
+                    quad_unstable = np.sum(robinson_coup[:, 1])
+                    st.metric("Quadrupole Robinson", f"{quad_unstable} points",
+                             delta="Unstable" if quad_unstable > 0 else "Stable",
+                             delta_color="inverse")
+                
+                with col3:
+                    hom_unstable = np.sum(HOM_coup)
+                    st.metric("HOM Instability", f"{hom_unstable} points",
+                             delta="Unstable" if hom_unstable > 0 else "Stable",
+                             delta_color="inverse")
+                
+                with col4:
+                    ptbl_unstable = np.sum(PTBL_coup)
+                    st.metric("PTBL", f"{ptbl_unstable} points",
+                             delta="Unstable" if ptbl_unstable > 0 else "Stable",
+                             delta_color="inverse")
+                
+                # Additional metrics
+                st.markdown("### Additional Metrics")
+                col1, col2 = st.columns(2)
+                
+                with col1:
+                    # Plot R-factor vs psi
+                    st.markdown("**R-Factor Evolution**")
+                    fig_r = plot_r_factor_vs_psi(
+                        psi_vals,
+                        R,
+                        title="R-Factor vs Harmonic Cavity Phase"
+                    )
+                    st.plotly_chart(fig_r, use_container_width=True)
+                
+                with col2:
+                    # Plot bunch length vs psi
+                    st.markdown("**Bunch Length Evolution**")
+                    fig_bl = go.Figure()
+                    fig_bl.add_trace(go.Scatter(
+                        x=psi_vals,
+                        y=bl,
+                        mode='lines+markers',
+                        name='Bunch Length',
+                        line=dict(color='cyan', width=2),
+                        marker=dict(size=4),
+                        hovertemplate='Psi: %{x}°<br>Bunch Length: %{y:.2f} ps<extra></extra>'
+                    ))
+                    fig_bl.update_layout(
+                        title="Bunch Length vs Harmonic Cavity Phase",
+                        xaxis_title="Psi (degrees)",
+                        yaxis_title="Bunch Length (ps)",
+                        template="plotly_dark",
+                        height=400,
+                        font=dict(size=12)
+                    )
+                    st.plotly_chart(fig_bl, use_container_width=True)
+                
+            except Exception as e:
+                st.error(f"Error processing results: {str(e)}")
+                import traceback
+                with st.expander("Show error details"):
+                    st.code(traceback.format_exc())
+                    st.write("**Results structure:**")
+                    st.write(f"Type: {type(scan_results)}")
+                    if isinstance(scan_results, tuple):
+                        st.write(f"Length: {len(scan_results)}")
+                        for i, item in enumerate(scan_results):
+                            st.write(f"Item {i}: {type(item)}, shape: {getattr(item, 'shape', 'N/A')}")
             
         else:
             st.error(f"Last analysis failed: {result.get('error', 'Unknown error')}")
