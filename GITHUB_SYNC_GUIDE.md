@@ -3,7 +3,7 @@
 ## 步骤 1：初始化 Git 仓库
 
 ```bash
-cd /home/lu/streamlit/albums-main
+cd /home/lu/streamlit/DRFB
 
 # 初始化 Git 仓库
 git init
@@ -82,7 +82,7 @@ git push
 我已经为你准备了一个自动化脚本，运行以下命令即可：
 
 ```bash
-cd /home/lu/streamlit/albums-main
+cd /home/lu/streamlit/DRFB
 ./sync_to_github.sh
 ```
 

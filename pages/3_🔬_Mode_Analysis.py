@@ -28,6 +28,7 @@ from utils.albums_wrapper import (
     analyze_robinson_modes
 )
 from utils.visualization import plot_mode_frequencies, plot_growth_rates, plot_r_factor_vs_psi
+from utils.ui_utils import fmt, render_display_settings
 import plotly.graph_objects as go
 
 st.set_page_config(page_title="Mode Analysis", page_icon="🔬", layout="wide")
@@ -37,6 +38,15 @@ st.markdown("Track Robinson modes and analyze instabilities across parameter ran
 
 # Sidebar
 with st.sidebar:
+    st.markdown("<div style='text-align: center;'><h1 style='color: #4facfe;'>DRFB</h1></div>", unsafe_allow_html=True)
+    st.markdown("---")
+    st.markdown("### Quick Navigation")
+    st.page_link("streamlit_app.py", label="Home", icon="🏠")
+    st.page_link("pages/0_🔧_Double_RF_System.py", label="Double RF System", icon="🔧")
+    st.page_link("pages/1_📊_Parameter_Scans.py", label="Parameter Scans", icon="📊")
+    st.page_link("pages/2_🎯_Optimization.py", label="R-Factor Optimization", icon="🎯")
+    st.page_link("pages/3_🔬_Mode_Analysis.py", label="Robinson Mode Analysis", icon="🔬")
+    st.markdown("---")
     st.header("Configuration")
     
     # Callback to update session state when preset changes
@@ -102,6 +112,9 @@ with st.sidebar:
         "Passive Harmonic Cavity",
         value=preset.get("passive_hc", True)
     )
+
+    # Global UI settings
+    render_display_settings()
 
 # Main content
 tab1, tab2, tab3 = st.tabs(["⚙️ Parameters", "▶️ Run Analysis", "📈 Results"])
@@ -390,7 +403,7 @@ with tab3:
                 st.markdown("### Analysis Range")
                 col1, col2, col3 = st.columns(3)
                 with col1:
-                    st.metric("Psi Range", f"{psi_vals[0]:.1f}° to {psi_vals[-1]:.1f}°")
+                    st.metric("Psi Range", f"{fmt(psi_vals[0], 1)}° to {fmt(psi_vals[-1], 1)}°")
                 with col2:
                     st.metric("Number of Points", len(psi_vals))
                 with col3:
@@ -417,7 +430,7 @@ with tab3:
                     mode_labels=mode_labels,
                     title="Robinson Mode Frequencies vs Harmonic Cavity Phase"
                 )
-                st.plotly_chart(fig_freq, use_container_width=True)
+                st.plotly_chart(fig_freq, width='stretch')
                 
                 # Plot Growth Rates
                 st.markdown("### Growth Rates")
@@ -435,7 +448,7 @@ with tab3:
                     mode_labels=mode_labels,
                     title="Mode Growth Rates vs Harmonic Cavity Phase"
                 )
-                st.plotly_chart(fig_growth, use_container_width=True)
+                st.plotly_chart(fig_growth, width='stretch')
                 
                 # Display instability summary
                 st.markdown("### Instability Summary")
@@ -477,7 +490,7 @@ with tab3:
                         R,
                         title="R-Factor vs Harmonic Cavity Phase"
                     )
-                    st.plotly_chart(fig_r, use_container_width=True)
+                    st.plotly_chart(fig_r, width='stretch')
                 
                 with col2:
                     # Plot bunch length vs psi
@@ -500,7 +513,7 @@ with tab3:
                         height=400,
                         font=dict(size=12)
                     )
-                    st.plotly_chart(fig_bl, use_container_width=True)
+                    st.plotly_chart(fig_bl, width='stretch')
                 
             except Exception as e:
                 st.error(f"Error processing results: {str(e)}")

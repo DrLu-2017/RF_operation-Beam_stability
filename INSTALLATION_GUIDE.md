@@ -28,7 +28,7 @@
 
 2. **克隆仓库**（如果有权限）
    ```bash
-   cd /home/lu/streamlit/albums-main
+   cd /home/lu/streamlit/DRFB
    git clone https://gitlab.synchrotron-soleil.fr/pa/collective-effects/mbtrack2.git mbtrack2-stable
    ```
 
@@ -68,7 +68,7 @@
    
    你的项目已经有一个 Dockerfile，它基于 SOLEIL 的 mbtrack2 镜像：
    ```bash
-   cd /home/lu/streamlit/albums-main
+   cd /home/lu/streamlit/DRFB
    docker build -t albums .
    docker run -p 8501:8501 albums
    ```
@@ -124,7 +124,7 @@ sudo apt update
 sudo apt install docker.io
 
 # 2. 构建镜像
-cd /home/lu/streamlit/albums-main
+cd /home/lu/streamlit/DRFB
 sudo docker build -t albums .
 
 # 3. 运行应用

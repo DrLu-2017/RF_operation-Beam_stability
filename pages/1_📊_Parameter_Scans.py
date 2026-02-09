@@ -29,6 +29,7 @@ from utils.albums_wrapper import (
     run_psi_roq_scan
 )
 from utils.visualization import plot_2d_heatmap, plot_stability_map, plot_stability_regions
+from utils.ui_utils import fmt, render_display_settings
 from utils.config_manager import ConfigManager
 from utils.config_utils import (
     save_current_config, 
@@ -48,6 +49,15 @@ initialize_session_config()
 
 # Sidebar for preset selection
 with st.sidebar:
+    st.markdown("<div style='text-align: center;'><h1 style='color: #4facfe;'>DRFB</h1></div>", unsafe_allow_html=True)
+    st.markdown("---")
+    st.markdown("### Quick Navigation")
+    st.page_link("streamlit_app.py", label="Home", icon="🏠")
+    st.page_link("pages/0_🔧_Double_RF_System.py", label="Double RF System", icon="🔧")
+    st.page_link("pages/1_📊_Parameter_Scans.py", label="Parameter Scans", icon="📊")
+    st.page_link("pages/2_🎯_Optimization.py", label="R-Factor Optimization", icon="🎯")
+    st.page_link("pages/3_🔬_Mode_Analysis.py", label="Robinson Mode Analysis", icon="🔬")
+    st.markdown("---")
     st.header("Configuration Management")
     
     # Initialize preset with default
@@ -197,6 +207,9 @@ with st.sidebar:
         else:
             st.caption("ℹ️ Alves method requires Passive Harmonic Cavity")
 
+    # Global UI settings
+    render_display_settings()
+
 
 # Main content area
 tab1, tab2, tab3, tab4 = st.tabs(["⚙️ Parameters", "💾 Save Config", "▶️ Run Scan", "📈 Results"])
@@ -261,6 +274,16 @@ with tab1:
             max_value=1.0,
             format="%.6f",
             key="ring_damping"
+        )
+        
+        energy_spread = st.number_input(
+            "Energy Spread",
+            value=float(ring_params.get("energy_spread", 0.001)),
+            min_value=0.00001,
+            max_value=0.01,
+            format="%.6f",
+            key="ring_espread",
+            help="Relative energy spread (sigma_delta). Impacts bunch length and stability."
         )
     
     with col2:
@@ -350,7 +373,7 @@ with tab1:
         hc_frequency = mc_frequency * hc_ratio
         hc_harmonic = int(mc_harmonic * hc_ratio)
         
-        st.info(f"Frequency: **{hc_frequency:.3f} MHz**")
+        st.info(f"Frequency: **{fmt(hc_frequency, 3)} MHz**")
         st.info(f"Harmonic: **{hc_harmonic}** (Absolute)")
         
         hc_q = st.number_input(
@@ -559,7 +582,8 @@ with tab3:
                 # Create ring and cavities (convert keV to GeV for backend)
                 ring = create_ring_from_params(
                     circumference, energy, momentum_compaction,
-                    energy_loss / 1e6, harmonic_number, damping_time  # Convert keV to GeV (1 GeV = 1e6 keV)
+                    energy_loss / 1e6, harmonic_number, damping_time,  # Convert keV to GeV (1 GeV = 1e6 keV)
+                    energy_spread=energy_spread
                 )
                 
                 main_cavity = create_cavity_from_params(
@@ -732,12 +756,12 @@ with tab4:
                                     convergence_pct = 100 * converged_points / total_points if total_points > 0 else 0
                                     
                                     if convergence_pct < 50:
-                                        st.warning(f"⚠️ **Low convergence rate: {convergence_pct:.1f}%** ({converged_points}/{total_points} points)")
+                                        st.warning(f"⚠️ **Low convergence rate: {fmt(convergence_pct, 1)}%** ({converged_points}/{total_points} points)")
                                         st.info("Results may be scattered/unreliable. Try: 1) Using Bosch method, 2) Reducing parameter range, 3) Checking cavity parameters")
                                     elif convergence_pct < 80:
-                                        st.info(f"ℹ️ Convergence rate: {convergence_pct:.1f}% ({converged_points}/{total_points} points)")
+                                        st.info(f"ℹ️ Convergence rate: {fmt(convergence_pct, 1)}% ({converged_points}/{total_points} points)")
                                     else:
-                                        st.success(f"✅ Good convergence: {convergence_pct:.1f}% ({converged_points}/{total_points} points)")
+                                        st.success(f"✅ Good convergence: {fmt(convergence_pct, 1)}% ({converged_points}/{total_points} points)")
                                 
                                 fig_stab = plot_stability_regions(
                                     psi_vals=result['psi_vals'],

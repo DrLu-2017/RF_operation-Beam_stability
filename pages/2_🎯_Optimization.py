@@ -29,6 +29,7 @@ from utils.albums_wrapper import (
     create_cavity_from_params,
     run_optimization
 )
+from utils.ui_utils import fmt, render_display_settings
 from utils.visualization import plot_optimization_result
 
 st.set_page_config(page_title="Optimization", page_icon="🎯", layout="wide")
@@ -41,6 +42,15 @@ initialize_session_config()
 
 # Sidebar
 with st.sidebar:
+    st.markdown("<div style='text-align: center;'><h1 style='color: #4facfe;'>DRFB</h1></div>", unsafe_allow_html=True)
+    st.markdown("---")
+    st.markdown("### Quick Navigation")
+    st.page_link("streamlit_app.py", label="Home", icon="🏠")
+    st.page_link("pages/0_🔧_Double_RF_System.py", label="Double RF System", icon="🔧")
+    st.page_link("pages/1_📊_Parameter_Scans.py", label="Parameter Scans", icon="📊")
+    st.page_link("pages/2_🎯_Optimization.py", label="R-Factor Optimization", icon="🎯")
+    st.page_link("pages/3_🔬_Mode_Analysis.py", label="Robinson Mode Analysis", icon="🔬")
+    st.markdown("---")
     st.header("Configuration")
     
     # Initialize preset with default or current
@@ -124,6 +134,9 @@ with st.sidebar:
         value=False,
         help="Faster computation, only solves equilibrium distribution"
     )
+
+    # Global UI settings
+    render_display_settings()
 
 # Main content
 tab1, tab2, tab3 = st.tabs(["⚙️ Parameters", "🎯 Optimize", "📊 Results"])
@@ -397,15 +410,15 @@ with tab3:
             with col1:
                 st.metric(
                     "Initial Psi",
-                    f"{result['psi0']:.2f}°",
+                    fmt(result['psi0']) + "°",
                     help="Starting point for optimization"
                 )
             
             with col2:
                 st.metric(
                     "Optimal Psi",
-                    f"{result['optimal_psi']:.2f}°",
-                    delta=f"{result['optimal_psi'] - result['psi0']:.2f}°",
+                    fmt(result['optimal_psi']) + "°",
+                    delta=fmt(result['optimal_psi'] - result['psi0']) + "°",
                     help="Optimized harmonic cavity phase"
                 )
             
@@ -413,7 +426,7 @@ with tab3:
                 if 'r_factor' in result:
                     st.metric(
                         "R-Factor",
-                        f"{result['r_factor']:.4f}",
+                        fmt(result['r_factor'], 4),
                         help="Touschek lifetime enhancement factor"
                     )
             
@@ -433,8 +446,8 @@ with tab3:
             st.markdown("### 💡 Recommendations")
             st.info(f"""
             **Optimal Configuration:**
-            - Set harmonic cavity phase to **{result['optimal_psi']:.2f}°**
-            - Expected R-factor: **{result.get('r_factor', 'N/A')}**
+            - Set harmonic cavity phase to **{fmt(result['optimal_psi'])}°**
+            - Expected R-factor: **{fmt(result.get('r_factor', 0), 4)}**
             
             This configuration should maximize the Touschek lifetime for the given parameters.
             """)

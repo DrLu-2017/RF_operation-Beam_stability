@@ -9,7 +9,7 @@ echo ""
 
 # Check if we're in the correct directory
 if [ ! -f "streamlit_app.py" ]; then
-    echo "❌ Error: Please run this script from the albums-main directory"
+    echo "❌ Error: Please run this script from the DRFB directory"
     exit 1
 fi
 

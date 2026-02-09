@@ -22,155 +22,202 @@ if pycolleff_local.exists():
 
 # Page configuration
 st.set_page_config(
-    page_title="ALBuMS - Beam Stability Analysis",
+    page_title="DRFB - Double RF & Beam Analysis",
     page_icon="⚛️",
     layout="wide",
     initial_sidebar_state="expanded"
 )
 
-# Custom CSS for better styling
+# Custom CSS for premium styling
 st.markdown("""
 <style>
+    @import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700&family=Inter:wght@300;400;600&display=swap');
+
+    html, body {
+        font-family: 'Inter', sans-serif;
+    }
+
     .main-header {
-        font-size: 3rem;
-        font-weight: bold;
-        background: linear-gradient(90deg, #667eea 0%, #764ba2 100%);
+        font-family: 'Orbitron', sans-serif;
+        font-size: 4rem;
+        font-weight: 700;
+        background: linear-gradient(135deg, #00f2fe 0%, #4facfe 100%);
         -webkit-background-clip: text;
         -webkit-text-fill-color: transparent;
         text-align: center;
-        padding: 1rem 0;
+        padding: 2rem 0 0.5rem 0;
+        letter-spacing: 2px;
+        text-transform: uppercase;
     }
+
     .subtitle {
         text-align: center;
-        font-size: 1.2rem;
-        color: #888;
-        margin-bottom: 2rem;
+        font-size: 1.4rem;
+        color: #a0aec0;
+        margin-bottom: 3rem;
+        font-weight: 300;
+        letter-spacing: 1px;
     }
-    .info-box {
-        background-color: rgba(102, 126, 234, 0.1);
-        border-left: 4px solid #667eea;
-        padding: 1rem;
-        border-radius: 0.5rem;
-        margin: 1rem 0;
+
+    .theme-card {
+        background: rgba(255, 255, 255, 0.05);
+        backdrop-filter: blur(10px);
+        border: 1px solid rgba(255, 255, 255, 0.1);
+        border-radius: 20px;
+        padding: 2rem;
+        transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        height: 100%;
     }
+
+    .theme-card:hover {
+        transform: translateY(-10px);
+        background: rgba(255, 255, 255, 0.1);
+        border-color: #4facfe;
+        box-shadow: 0 20px 40px rgba(0, 0, 0, 0.4);
+    }
+
+    .theme-card h2 {
+        font-family: 'Orbitron', sans-serif;
+        color: #4facfe;
+        font-size: 1.8rem;
+        margin-bottom: 1.5rem;
+        line-height: 1.2;
+    }
+
+    .theme-card p {
+        color: #cbd5e0;
+        line-height: 1.6;
+    }
+
+    .feature-tag {
+        display: inline-block;
+        background: rgba(79, 172, 254, 0.2);
+        color: #4facfe;
+        padding: 4px 12px;
+        border-radius: 20px;
+        font-size: 0.8rem;
+        margin-right: 8px;
+        margin-bottom: 8px;
+        border: 1px solid rgba(79, 172, 254, 0.3);
+    }
+
     .stButton>button {
-        width: 100%;
-        background: linear-gradient(90deg, #667eea 0%, #764ba2 100%);
+        background: linear-gradient(135deg, #00f2fe 0%, #4facfe 100%);
         color: white;
         border: none;
-        padding: 0.5rem 1rem;
-        font-weight: bold;
-        border-radius: 0.5rem;
+        padding: 0.6rem 2rem;
+        font-weight: 600;
+        border-radius: 12px;
+        text-transform: uppercase;
+        letter-spacing: 1px;
         transition: all 0.3s;
     }
+
     .stButton>button:hover {
-        transform: translateY(-2px);
-        box-shadow: 0 4px 12px rgba(102, 126, 234, 0.4);
+        box-shadow: 0 0 20px rgba(79, 172, 254, 0.6);
+        transform: scale(1.02);
+    }
+
+    hr {
+        border-color: rgba(255, 255, 255, 0.1);
     }
 </style>
 """, unsafe_allow_html=True)
 
-# Main header
-st.markdown('<h1 class="main-header">⚛️ ALBuMS</h1>', unsafe_allow_html=True)
-st.markdown('<p class="subtitle">Algorithms for Longitudinal Multibunch Beam Stability</p>', unsafe_allow_html=True)
+# Main Title Section
+st.markdown('<h1 class="main-header">DRFB</h1>', unsafe_allow_html=True)
+st.markdown('<p class="subtitle">Double RF Beam Analysis & Stability Dashboard</p>', unsafe_allow_html=True)
 
-# Introduction
-st.markdown("""
-## Welcome to ALBuMS Web Interface
-
-**ALBuMS** is an open-source Python package for analyzing longitudinal beam instabilities in double RF systems 
-used in synchrotron light sources and storage rings.
-
-### Key Features
-
-- 🔬 **Parameter Scanning**: Explore stability regions across parameter spaces
-- 🎯 **Optimization**: Maximize Touschek lifetime through R-factor optimization  
-- 📊 **Mode Analysis**: Track Robinson modes and identify instabilities
-- 📈 **Interactive Visualization**: Explore results with dynamic plots
-
-### Quick Start
-
-1. **Navigate** to a page using the sidebar
-2. **Select** a preset configuration or enter custom parameters
-3. **Run** analysis and explore interactive results
-4. **Export** data and plots for your research
-
----
-""")
-
-# Feature cards
-col1, col2, col3 = st.columns(3)
+# Main Themes
+col1, col2 = st.columns(2)
 
 with col1:
+    st.image("static/double_rf_system.png", width='stretch')
     st.markdown("""
-    <div class="info-box">
-        <h3>📊 Parameter Scans</h3>
-        <p>Scan stability regions across psi vs current, psi vs R/Q, or psi vs QL parameter spaces.</p>
+    <div class="theme-card">
+        <h2>Double RF Systems</h2>
+        <p>Advanced analysis of main and harmonic cavity interactions. Optimize RF parameters, 
+        power distribution, and cavity detunings to ensure ideal beam characteristics.</p>
+        <div style="margin-top: 1rem;">
+            <span class="feature-tag">Cavity Optimization</span>
+            <span class="feature-tag">Phasing Control</span>
+            <span class="feature-tag">Power Balance</span>
+        </div>
     </div>
     """, unsafe_allow_html=True)
 
 with col2:
+    st.image("static/stability_research.png", width='stretch')
     st.markdown("""
-    <div class="info-box">
-        <h3>🎯 Optimization</h3>
-        <p>Find optimal harmonic cavity settings to maximize the Touschek lifetime R-factor.</p>
+    <div class="theme-card">
+        <h2>Stability Research</h2>
+        <p>Leveraging ALBuMS algorithms to investigate longitudinal multibunch instabilities. 
+        Track Robinson modes, calculate growth rates, and find stable operating regions.</p>
+        <div style="margin-top: 1rem;">
+            <span class="feature-tag">Mode Tracking</span>
+            <span class="feature-tag">Growth Rates</span>
+            <span class="feature-tag">Stability Maps</span>
+            <span class="feature-tag">Landau Damping</span>
+        </div>
     </div>
     """, unsafe_allow_html=True)
 
-with col3:
-    st.markdown("""
-    <div class="info-box">
-        <h3>🔬 Mode Analysis</h3>
-        <p>Analyze Robinson modes, growth rates, and mode coupling phenomena.</p>
-    </div>
-    """, unsafe_allow_html=True)
+st.markdown("<br>", unsafe_allow_html=True)
 
-# Getting started section
+# Detailed Features or Quick Links
 st.markdown("---")
-st.markdown("### 🚀 Getting Started")
+st.markdown("### 🔍 Explore Analytical Tools")
 
-st.info("""
-**New to ALBuMS?** Start with the **Parameter Scans** page and select the "SOLEIL II" preset 
-to see a quick example of stability analysis.
-""")
+feat1, feat2, feat3 = st.columns(3)
 
-# Documentation and references
-with st.expander("📚 Documentation & References"):
+with feat1:
+    st.info("**Parameter Scans**")
+    st.write("Generate high-resolution stability maps (Psi vs Current) to identify safe storage ring operation limits.")
+    if st.button("Launch Scans"):
+        st.switch_page("pages/1_📊_Parameter_Scans.py")
+
+with feat2:
+    st.info("**R-Factor Optimization**")
+    st.write("Maximize Touschek lifetime by finding optimal harmonic cavity detuning and voltage settings.")
+    if st.button("Start Optimization"):
+        st.switch_page("pages/2_🎯_Optimization.py")
+
+with feat3:
+    st.info("**Mode Analysis**")
+    st.write("Deep dive into Robinson modes and multibunch coupling with interactive spectral visualization.")
+    if st.button("Analyze Modes"):
+        st.switch_page("pages/3_🔬_Mode_Analysis.py")
+
+# Footer/About
+st.markdown("<br><br>", unsafe_allow_html=True)
+st.markdown("---")
+with st.expander("Scientific Foundation"):
     st.markdown("""
-    #### Documentation
-    - [ALBuMS Documentation](https://albums.readthedocs.io/)
-    - [GitHub Repository](https://github.com/synchrotron-soleil/albums)
+    ### ALBuMS (Algorithms for Longitudinal Multibunch Beam Stability)
     
-    #### Citation
-    If you use ALBuMS in your research, please cite:
+    This platform integrates state-of-the-art semi-analytical algorithms for studying longitudinal beam instabilities 
+    in double RF systems. Developed at **Synchrotron SOLEIL**, it provides researchers with robust tools for 
+    4th generation light source design and operation.
     
-    > Gamelin, A., Gubaidulin, V., Alves, M. B., & Olsson, T. (2024). 
-    > Semi-analytical algorithms to study longitudinal beam instabilities in double rf systems. 
-    > arXiv preprint arXiv:2412.06539.
-    
-    #### About
-    ALBuMS is developed at Synchrotron SOLEIL for the analysis of longitudinal multibunch beam stability 
-    in 4th-generation light sources.
+    **Core Backend:** 
+    - `ALBuMS` Physics Engine
+    - `mbtrack2` Many-particle tracking library
+    - `pycolleff` Collective effects calculations
     """)
 
-# Sidebar information
+# Sidebar
 with st.sidebar:
-    st.markdown("## Navigation")
-    st.info("""
-    Use the pages above to access different analysis tools:
-    
-    - **Parameter Scans**: 2D stability maps
-    - **Optimization**: R-factor maximization
-    - **Mode Analysis**: Robinson mode tracking
-    """)
+    st.markdown("<div style='text-align: center;'><h1 style='color: #4facfe;'>DRFB</h1></div>", unsafe_allow_html=True)
+    st.markdown("---")
+    st.markdown("### Quick Navigation")
+    st.page_link("streamlit_app.py", label="Home", icon="🏠")
+    st.page_link("pages/0_🔧_Double_RF_System.py", label="Double RF System", icon="🔧")
+    st.page_link("pages/1_📊_Parameter_Scans.py", label="Parameter Scans", icon="📊")
+    st.page_link("pages/2_🎯_Optimization.py", label="R-Factor Optimization", icon="🎯")
+    st.page_link("pages/3_🔬_Mode_Analysis.py", label="Robinson Mode Analysis", icon="🔬")
     
     st.markdown("---")
-    st.markdown("### About")
-    st.markdown("""
-    **Version**: 0.1.0  
-    **Framework**: Streamlit  
-    **Backend**: ALBuMS + mbtrack2
-    """)
-    
-    st.markdown("---")
-    st.markdown("Made with ❤️ for accelerator physics")
+    st.markdown("### System Status")
+    st.success("Backend: Connected")
+    st.info("Version: 1.0.0 (DRFB Edition)")
+

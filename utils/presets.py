@@ -65,52 +65,86 @@ ALADDIN_HARMONIC_CAVITY_ACTIVE = {
 SOLEIL_II_RF_FREQ = 352.2  # MHz (Main cavity frequency)
 SOLEIL_II_HC_FREQ = 1408.8  # MHz (4th harmonic = 1.4088 GHz)
 
-SOLEIL_II_RING = {
-    "name": "SOLEIL II",
-    "circumference": 354.0,  # meters
-    "frequency": SOLEIL_II_RF_FREQ,  # MHz
+# Ring parameters for different ID configurations
+SOLEIL_II_RING_OPEN = {
+    "name": "SOLEIL II (Open IDs)",
+    "circumference": 354.0,
+    "frequency": SOLEIL_II_RF_FREQ,
     "energy": 2.75,  # GeV
-    "momentum_compaction": 1.06e-4,  # Closed IDs
-    "energy_loss_per_turn": 0.000743,  # GeV (Closed IDs: 743 keV)
+    "momentum_compaction": 1.06e-4, 
+    "energy_loss_per_turn": 0.000471,  # 471 keV
     "harmonic_number": 416,
-    "damping_time": 0.0122,  # seconds (12.2 ms)
-    "energy_spread": 8.55e-4,  # Closed IDs energy spread
+    "damping_time": 0.0115,  # 11.5 ms
+    "energy_spread": 9.26e-4,
 }
 
+SOLEIL_II_RING_CLOSED = {
+    "name": "SOLEIL II (Closed IDs)",
+    "circumference": 354.0,
+    "frequency": SOLEIL_II_RF_FREQ,
+    "energy": 2.75,  # GeV
+    "momentum_compaction": 1.06e-4, 
+    "energy_loss_per_turn": 0.000743,  # 743 keV
+    "harmonic_number": 416,
+    "damping_time": 0.0059,  # 5.9 ms
+    "energy_spread": 8.55e-4,
+}
+
+# Default RING (pointing to Closed IDs as it was before, but with fixed values)
+SOLEIL_II_RING = SOLEIL_II_RING_CLOSED
+
 # ESRF-EBS Normal Conducting (NC) 352 MHz main cavities (MC)
-# Parameters per cavity, Ncav = 4
+# Parameters for the TOTAL system of 4 cavities
 SOLEIL_II_MAIN_CAVITY = {
     "voltage": 1.7,  # MV (Vrf = 1.7 MV total)
-    "frequency": SOLEIL_II_RF_FREQ,  # MHz (352 MHz)
+    "frequency": SOLEIL_II_RF_FREQ,
     "harmonic": 416,
-    "Q0": 35700,  # Unloaded Q = 35700
-    "Q": 35700,  # Q0 = 35700 (for backward compatibility)
-    "QL": 6000,  # Loaded Q
-    "Q_ext": 6364,  # External Q
-    "Rs": 5.0,  # Shunt impedance Rs = 5 MΩ / cav
-    "R_over_Q": 140.0,  # Rs/Q0 ≈ 5e6/35700 ≈ 140 Ohms
-    "Ncav": 4,  # Number of cavities
-    "beta": 5.5,  # Coupling factor β
-    "detuning_khz": 0.0,  # Detuning frequency (kHz)
-    "rf_feedback_gain": 1.3,  # RF feedback gain
-    "tau_us": 4.87,  # Cavity decay time (μs)
+    "Q0": 35700,
+    "Q": 35700,
+    "QL": 6000,
+    "Q_ext": 6364,
+    "Rs": 20.0,  # Total Rs = 5 MΩ/cav * 4 cav = 20 MΩ
+    "R_over_Q": 560.0,  # Total R/Q = 140 Ω/cav * 4 cav = 560 Ω
+    "Ncav": 4,
+    "beta": 5.5,
+    "detuning_khz": 0.0,
+    "rf_feedback_gain": 1.3,
+    "tau_us": 4.87,
 }
 
 # Passive Normal Conducting (NC) harmonic cavities (HC)
-# Custom design by ESRF, Ncav = 2 or 3
-SOLEIL_II_HARMONIC_CAVITY = {
-    "voltage": 0.35,  # MV (Vmax = 350 kV / cav)
-    "frequency": SOLEIL_II_HC_FREQ,  # MHz (1.41 GHz, 4th harmonic)
-    "harmonic": 1664,  # 416 * 4 = 1664
-    "harmonic_number": 4,  # 4th harmonic of main RF
-    "Q0": 31000,  # Unloaded Q = 31000
-    "Q": 31000,  # Q0 = 31000 (for backward compatibility)
-    "R_over_Q": 29.6,  # R/Q = 29.6 Ω / cav
-    "Rs": 0.92,  # Shunt impedance Rs = 0.92 MΩ / cav
-    "Ncav": 3,  # Number of cavities (2 or 3)
-    "beta": 0.0,  # Coupling factor β (passive cavity)
-    "tau_us": 7.0,  # Cavity decay time (μs)
+# Parameters for the TOTAL system of 2 cavities
+SOLEIL_II_HARMONIC_CAVITY_2HC = {
+    "voltage": 0.7,  # 350 kV/cav * 2 cav = 0.7 MV
+    "frequency": SOLEIL_II_HC_FREQ,
+    "harmonic": 1664,
+    "harmonic_number": 4,
+    "Q0": 31000,
+    "Q": 31000,
+    "R_over_Q": 59.2,  # 29.6 Ω/cav * 2 cav = 59.2 Ω
+    "Rs": 1.84,  # 0.92 MΩ/cav * 2 cav = 1.84 MΩ
+    "Ncav": 2,
+    "beta": 0.0,
+    "tau_us": 7.0,
 }
+
+# Parameters for the TOTAL system of 3 cavities
+SOLEIL_II_HARMONIC_CAVITY_3HC = {
+    "voltage": 1.05,  # 350 kV/cav * 3 cav = 1.05 MV
+    "frequency": SOLEIL_II_HC_FREQ,
+    "harmonic": 1664,
+    "harmonic_number": 4,
+    "Q0": 31000,
+    "Q": 31000,
+    "R_over_Q": 88.8,  # 29.6 Ω/cav * 3 cav = 88.8 Ω
+    "Rs": 2.76,  # 0.92 MΩ/cav * 3 cav = 2.76 MΩ
+    "Ncav": 3,
+    "beta": 0.0,
+    "tau_us": 7.0,
+}
+
+# Default HC
+SOLEIL_II_HARMONIC_CAVITY = SOLEIL_II_HARMONIC_CAVITY_2HC
 
 # Preset configurations
 PRESETS = {
@@ -140,43 +174,64 @@ PRESETS = {
             "psi_points": 30,
         }
     },
+    "SOLEIL II (Open IDs, 2 HC)": {
+        "ring": SOLEIL_II_RING_OPEN,
+        "main_cavity": SOLEIL_II_MAIN_CAVITY,
+        "harmonic_cavity": SOLEIL_II_HARMONIC_CAVITY_2HC,
+        "current": 0.5,
+        "passive_hc": True,
+        "scan_params": {
+            "psi_min": 60.0,
+            "psi_max": 100.0,
+            "psi_points": 60,
+        }
+    },
+    "SOLEIL II (Open IDs, 3 HC)": {
+        "ring": SOLEIL_II_RING_OPEN,
+        "main_cavity": SOLEIL_II_MAIN_CAVITY,
+        "harmonic_cavity": SOLEIL_II_HARMONIC_CAVITY_3HC,
+        "current": 0.5,
+        "passive_hc": True,
+        "scan_params": {
+            "psi_min": 60.0,
+            "psi_max": 100.0,
+            "psi_points": 60,
+        }
+    },
+    "SOLEIL II (Closed IDs, 2 HC)": {
+        "ring": SOLEIL_II_RING_CLOSED,
+        "main_cavity": SOLEIL_II_MAIN_CAVITY,
+        "harmonic_cavity": SOLEIL_II_HARMONIC_CAVITY_2HC,
+        "current": 0.5,
+        "passive_hc": True,
+        "scan_params": {
+            "psi_min": 60.0,
+            "psi_max": 100.0,
+            "psi_points": 60,
+        }
+    },
+    "SOLEIL II (Closed IDs, 3 HC)": {
+        "ring": SOLEIL_II_RING_CLOSED,
+        "main_cavity": SOLEIL_II_MAIN_CAVITY,
+        "harmonic_cavity": SOLEIL_II_HARMONIC_CAVITY_3HC,
+        "current": 0.5,
+        "passive_hc": True,
+        "scan_params": {
+            "psi_min": 60.0,
+            "psi_max": 100.0,
+            "psi_points": 60,
+        }
+    },
     "SOLEIL II": {
-        "ring": SOLEIL_II_RING,
+        "ring": SOLEIL_II_RING_CLOSED,
         "main_cavity": SOLEIL_II_MAIN_CAVITY,
-        "harmonic_cavity": SOLEIL_II_HARMONIC_CAVITY,
-        "current": 0.5,  # A
+        "harmonic_cavity": SOLEIL_II_HARMONIC_CAVITY_2HC,
+        "current": 0.5,
         "passive_hc": True,
-        # Scan parameter defaults for SOLEIL II
         "scan_params": {
-            "psi_min": 1.0,   # degrees - wider range for SOLEIL II
-            "psi_max": 180.0, # degrees
-            "psi_points": 50,
-        }
-    },
-    "SOLEIL II (Phase 1)": {
-        "ring": {**SOLEIL_II_RING, "energy_loss_per_turn": 0.000803},  # 803 keV (487 + 316)
-        "main_cavity": SOLEIL_II_MAIN_CAVITY,
-        "harmonic_cavity": SOLEIL_II_HARMONIC_CAVITY,
-        "current": 0.5,  # A
-        "passive_hc": True,
-        "operation_phase": "Phase 1",
-        "scan_params": {
-            "psi_min": 1.0,
-            "psi_max": 180.0,
-            "psi_points": 50,
-        }
-    },
-    "SOLEIL II (Phase 2)": {
-        "ring": {**SOLEIL_II_RING, "energy_loss_per_turn": 0.000846},  # 846 keV (487 + 359)
-        "main_cavity": SOLEIL_II_MAIN_CAVITY,
-        "harmonic_cavity": SOLEIL_II_HARMONIC_CAVITY,
-        "current": 0.5,  # A
-        "passive_hc": True,
-        "operation_phase": "Phase 2",
-        "scan_params": {
-            "psi_min": 1.0,
-            "psi_max": 180.0,
-            "psi_points": 50,
+            "psi_min": 60.0,
+            "psi_max": 100.0,
+            "psi_points": 60,
         }
     },
     "Custom": {

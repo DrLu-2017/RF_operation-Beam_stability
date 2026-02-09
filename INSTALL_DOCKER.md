@@ -136,7 +136,7 @@ sudo systemctl enable docker
 安装 Docker 后，返回项目目录并构建镜像：
 
 ```bash
-cd /home/lu/streamlit/albums-main
+cd /home/lu/streamlit/DRFB
 
 # 构建 ALBuMS Docker 镜像
 ./build_complete_docker.sh

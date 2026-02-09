@@ -17,7 +17,7 @@
 ### 步骤 1：运行构建脚本
 
 ```bash
-cd /home/lu/streamlit/albums-main
+cd /home/lu/streamlit/DRFB
 ./build_complete_docker.sh
 ```
 

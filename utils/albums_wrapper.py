@@ -585,7 +585,8 @@ def validate_parameters(ring_dict, mc_dict, hc_dict, current):
 
 
 def create_ring_from_params(circumference, energy, momentum_compaction, 
-                            energy_loss_per_turn, harmonic_number, damping_time):
+                            energy_loss_per_turn, harmonic_number, damping_time,
+                            energy_spread=0.001):
     """
     Create a ring parameters dictionary (compatible with ALBuMS).
     
@@ -609,6 +610,8 @@ def create_ring_from_params(circumference, energy, momentum_compaction,
         Harmonic number
     damping_time : float
         Damping time in seconds
+    energy_spread : float, optional
+        Relative energy spread (sigma_delta). Default is 0.001.
         
     Returns
     -------
@@ -672,8 +675,8 @@ def create_ring_from_params(circumference, energy, momentum_compaction,
             "omega1": harmonic_number * 2 * np.pi * revolution_frequency,  # RF angular frequency
             
             # Beam dynamics - calculate from physics parameters
-            # sigma_delta (relative momentum spread) - typical value for light source
-            "sigma_delta": 0.001,  # ~0.1% momentum spread (typical for 2.75 GeV light source)
+            # sigma_delta (relative momentum spread)
+            "sigma_delta": energy_spread,
             
             # Synchrotron tune and frequency (rough estimate for beam loading initialization)
             # omega_s^2 ≈ alpha_c * h * e * Vc / (2*pi*E0) * omega0

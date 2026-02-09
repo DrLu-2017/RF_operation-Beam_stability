@@ -57,8 +57,8 @@ Thumbs.db
 *.tar
 *.tar.gz
 albums_v*.tar.gz
-albums-main.tar.gz
-albums-main-clean.tar.gz
+DRFB.tar.gz
+DRFB-clean.tar.gz
 
 # Zone Identifier (Windows)
 *:Zone.Identifier

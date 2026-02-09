@@ -90,7 +90,7 @@ fig.update_layout(
     template="plotly_white",
     height=500
 )
-st.plotly_chart(fig, use_container_width=True)
+st.plotly_chart(fig, width='stretch')
 
 # Static Parameter Reference Table
 st.subheader("Machine Parameter Reference")

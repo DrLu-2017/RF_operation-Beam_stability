@@ -481,47 +481,67 @@ def plot_stability_regions(psi_vals, y_vals, results,
     valid_ratio = np.sum(np.isfinite(xi_masked)) / xi_masked.size
     
     if valid_ratio > 0.1:  # At least 10% valid points
-        # Trace 1: Standard Xi levels from 0.2 to 1.0 with 0.1 step
+        # Trace 0: Heatmap for Xi (Background)
+        # Matches the yellow-green gradients in the reference image
+        fig.add_trace(go.Heatmap(
+            z=xi_masked,
+            x=psi_vals,
+            y=y_plot,
+            colorscale="viridis",
+            colorbar=dict(
+                title="ξ",
+                titleside="right",
+                thickness=15,
+                len=0.7,
+                y=0.5
+            ),
+            hoverinfo='skip',
+            opacity=0.8,
+            showscale=True,
+            zmin=0,
+            zmax=1.1
+        ))
+
+        # Use specific Xi levels as seen in the reference image
+        xi_levels = [0.2, 0.4, 0.6, 0.8, 1.0]
+        
+        # Trace 1: Black isolines
         fig.add_trace(go.Contour(
             z=xi_masked,
             x=psi_vals,
             y=y_plot,
-            colorscale="Greys",
-            opacity=0.5,
             showscale=False,
             contours=dict(
                 coloring='lines',
                 showlabels=True,
-                labelfont=dict(size=10, color='gray'),
+                labelfont=dict(size=12, color='black'),
                 start=0.2,
                 end=1.0,
-                size=0.1,
+                size=0.2,
             ),
-            line=dict(width=1, dash='dot'),
-            name="Xi Isolines (0.2-1.0)",
+            line=dict(width=1, color='black'),
+            name="Xi Isolines",
             hoverinfo='skip',
-            connectgaps=False  # Don't connect across gaps
+            connectgaps=False
         ))
         
-        # Trace 2: Specific Xi level 1.05 (Stability Limit) - red line
-        # Only draw if we have Xi values near 1.05
+        # Trace 2: Specific Xi level 1.05 (Theoretical Limit)
         if np.nanmax(xi_masked) > 1.0:
             fig.add_trace(go.Contour(
                 z=xi_masked,
                 x=psi_vals,
                 y=y_plot,
-                colorscale=[[0, 'red'], [1, 'red']], # Fixed red color
+                colorscale=[[0, 'black'], [1, 'black']],
                 showscale=False,
                 contours=dict(
                     coloring='lines',
                     showlabels=True,
-                    labelfont=dict(size=10, color='red'),
+                    labelfont=dict(size=12, color='black', weight='bold'),
                     start=1.05,
                     end=1.05,
-                    size=0.1, # Dummy size
                 ),
-                line=dict(width=3, color='red'), # Thicker red line for visibility
-                name="Xi = 1.05 (PTBL threshold)",
+                line=dict(width=2, color='black'),
+                name="Xi = 1.05",
                 hoverinfo='skip',
                 connectgaps=False
             ))
@@ -564,7 +584,6 @@ def plot_stability_regions(psi_vals, y_vals, results,
         condition, symbol, label, color = item
         
         if condition.shape != X.shape:
-             # Try to match shape
              continue
              
         mask = condition.flatten()
@@ -577,9 +596,10 @@ def plot_stability_regions(psi_vals, y_vals, results,
             mode='markers',
             marker=dict(
                 symbol=symbol,
-                size=8,
+                size=7,
                 color=color,
-                line=dict(width=1, color='white') if symbol != 'x' else dict(width=2)
+                opacity=0.8,
+                line=dict(width=0.5, color='white') if symbol != 'x' else dict(width=1.5)
             ),
             name=label,
             hovertemplate=f"{label}<br>{x_label}: %{{x:.2f}}<br>{y_label_plot}: %{{y:.2f}}<extra></extra>"
@@ -639,10 +659,11 @@ def plot_stability_regions(psi_vals, y_vals, results,
             y=Y_flat[is_stable.flatten()],
             mode='markers',
             marker=dict(
-                symbol='circle-open', # Open circle for stable
+                symbol='circle', 
                 size=6,
                 color='blue',
-                line=dict(width=1)
+                opacity=0.6,
+                line=dict(width=0.5, color='white')
             ),
             name="Stable beam",
             hovertemplate=f"Stable Beam<br>{x_label}: %{{x:.2f}}<br>{y_label_plot}: %{{y:.2f}}<extra></extra>"
@@ -653,15 +674,21 @@ def plot_stability_regions(psi_vals, y_vals, results,
         xaxis_title=x_label,
         yaxis_title=y_label_plot,
         template="plotly_white",
-        height=600,
+        height=700,
         font=dict(size=12),
         legend=dict(
             orientation="h",
-            yanchor="bottom",
-            y=1.02,
-            xanchor="right",
-            x=1
-        )
+            yanchor="top",
+            y=-0.15,
+            xanchor="center",
+            x=0.5
+        ),
+        plot_bgcolor='white',
+        paper_bgcolor='white'
     )
+    
+    # Add gridlines
+    fig.update_xaxes(showgrid=True, gridwidth=1, gridcolor='LightGray')
+    fig.update_yaxes(showgrid=True, gridwidth=1, gridcolor='LightGray')
     
     return fig
