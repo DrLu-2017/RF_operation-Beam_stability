@@ -14,3 +14,4 @@ seaborn>=0.13.0
 # On Windows, ALBuMS will work without shell command execution
 
 
+paramiko>=3.0.0

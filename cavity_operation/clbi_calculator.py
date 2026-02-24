@@ -146,12 +146,18 @@ class DoubleRF_CLBI:
         self.V_prime = V_prime # [V/rad]
         
         # Robinson Stability Criterion (Static):
-        # Above transition (eta > 0), we need focusing slope V' < 0.
-        # If V' >= 0, the system is statically unstable.
+        # Equilibrium is stable if η * V' < 0.
+        # Above transition (η > 0), stable region is on the falling slope (V' < 0).
+        # Below transition (η < 0), stable region is on the rising slope (V' > 0).
         self.is_statically_unstable = False
-        if eta > 0 and V_prime >= -1e-9:
+        
+        # We allow a small tolerance (100 V/rad) for numerical noise near flat potential (V'=0).
+        if eta > 0 and V_prime > 100.0:
              self.is_statically_unstable = True
-             warnings.warn(f"Static Robinson Instability: V'={V_prime:.2e} V/rad (expected < 0 for eta={eta:.2e})", RuntimeWarning)
+             warnings.warn(f"Static Robinson Instability (Above Transition): V'={V_prime:.2e} V/rad. Bunch is on the rising (defocusing) slope.", RuntimeWarning)
+        elif eta < 0 and V_prime < -100.0:
+             self.is_statically_unstable = True
+             warnings.warn(f"Static Robinson Instability (Below Transition): V'={V_prime:.2e} V/rad. Bunch is on the falling (defocusing) slope.", RuntimeWarning)
         
         # Term under sqrt for eta > 0: ws^2 = -(h eta w_rev^2 V') / (2pi E0)
         # Note: h*eta*V' has units [1 * 1 * V/rad] -> V. E0 has units [eV].

@@ -50,6 +50,10 @@ temp/
 .DS_Store
 Thumbs.db
 
+# sensitive info
+ssh_profiles*.json
+auth_config.yaml
+
 # Gemini AI assistant
 .gemini/
 

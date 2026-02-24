@@ -62,32 +62,152 @@ ALADDIN_HARMONIC_CAVITY_ACTIVE = {
 
 # SOLEIL II parameters (from SOLEIL II Lattice Review, January 2026)
 # Reference: P. Borowiec & al., 28th ESLS RF Workshops – ALBA Synchrotron, Spain, October 2025
-SOLEIL_II_RF_FREQ = 352.2  # MHz (Main cavity frequency)
-SOLEIL_II_HC_FREQ = 1408.8  # MHz (4th harmonic = 1.4088 GHz)
+# SOLEIL II parameters
+SOLEIL_II_RF_FREQ = 352.0  # MHz (Main cavity frequency as requested)
+SOLEIL_II_HC_FREQ = 1408.0  # MHz (4th harmonic = 1.408 GHz)
 
 # Ring parameters for different ID configurations
 SOLEIL_II_RING_OPEN = {
     "name": "SOLEIL II (Open IDs)",
-    "circumference": 354.0,
+    "circumference": 353.98,
     "frequency": SOLEIL_II_RF_FREQ,
     "energy": 2.75,  # GeV
     "momentum_compaction": 1.06e-4, 
-    "energy_loss_per_turn": 0.000471,  # 471 keV
+    "energy_loss_per_turn": 0.000471,  # 471 keV (V3633 bare lattice)
     "harmonic_number": 416,
     "damping_time": 0.0115,  # 11.5 ms
-    "energy_spread": 9.26e-4,
+    "energy_spread": 9.3e-4,    # 0.093%
+    "sigma_z0": 9.0e-12,        # 9.0 ps (V3633 bare lattice)
 }
 
 SOLEIL_II_RING_CLOSED = {
     "name": "SOLEIL II (Closed IDs)",
-    "circumference": 354.0,
+    "circumference": 353.98,
     "frequency": SOLEIL_II_RF_FREQ,
     "energy": 2.75,  # GeV
     "momentum_compaction": 1.06e-4, 
-    "energy_loss_per_turn": 0.000743,  # 743 keV
+    "energy_loss_per_turn": 0.000787,  # 787 keV (471 keV bare + 316 keV IDs)
     "harmonic_number": 416,
     "damping_time": 0.0059,  # 5.9 ms
     "energy_spread": 8.55e-4,
+    "sigma_z0": 9.0e-12,
+}
+
+# Diamond parameters
+DIAMOND_RING = {
+    "name": "Diamond",
+    "circumference": 561.6,
+    "frequency": 499.680,
+    "energy": 3.0,
+    "momentum_compaction": 1.7e-4,
+    "energy_loss_per_turn": 0.0010, # 1.0 MeV (without IDs)
+    "harmonic_number": 936,
+}
+
+# ALBA parameters
+ALBA_RING = {
+    "name": "ALBA",
+    "circumference": 268.8,
+    "frequency": 499.654,
+    "energy": 3.0,
+    "momentum_compaction": 8.8e-4,
+    "energy_loss_per_turn": 0.0013, # 1.3 MeV
+    "harmonic_number": 448,
+}
+
+# PETRA III parameters
+PETRA_III_RING = {
+    "name": "PETRA III",
+    "circumference": 2304.0,
+    "frequency": 499.564,
+    "energy": 6.0,
+    "momentum_compaction": 1.2e-4,
+    "energy_loss_per_turn": 0.004660, # 4.66 MeV
+    "harmonic_number": 3840,
+}
+
+# ESRF-EBS parameters
+ESRF_EBS_RING = {
+    "name": "ESRF-EBS",
+    "circumference": 843.977,
+    "frequency": 352.202,
+    "energy": 6.0,
+    "momentum_compaction": 8.5e-5,
+    "energy_loss_per_turn": 0.0025, # 2.5 MeV
+    "harmonic_number": 992,
+}
+
+# SLS 2.0 parameters
+SLS_2_0_RING = {
+    "name": "SLS 2.0",
+    "circumference": 290.4,
+    "frequency": 499.654,
+    "energy": 2.7,
+    "momentum_compaction": 1.33e-4, # Nominal magnitude
+    "energy_loss_per_turn": 0.00085, # ~850 keV
+    "harmonic_number": 484,
+}
+
+# BESSY II parameters
+BESSY_II_RING = {
+    "name": "BESSY II",
+    "circumference": 240.0,
+    "frequency": 499.654,
+    "energy": 1.7,
+    "momentum_compaction": 1.6e-3,
+    "energy_loss_per_turn": 0.000178, # 178 keV
+    "harmonic_number": 400,
+}
+
+# SOLEIL (Current) parameters
+SOLEIL_NOMINAL_RING = {
+    "name": "SOLEIL (Nominal)",
+    "circumference": 354.1,
+    "frequency": 352.197,
+    "energy": 2.75,
+    "momentum_compaction": 4.38e-4,
+    "energy_loss_per_turn": 0.000944, # 944 keV (with IDs)
+    "harmonic_number": 416,
+    "damping_time": 0.0066,           # 6.6 ms (Present)
+    "sigma_z0": 15.2e-12,             # 15.2 ps (SOLEIL 1)
+}
+
+# MAX IV 3 GeV parameters
+MAX_IV_3GEV_RING_BARE = {
+    "name": "MAX IV 3 GeV (Bare)",
+    "circumference": 528.0,
+    "frequency": 99.931,
+    "energy": 3.0,
+    "momentum_compaction": 3.06e-4,
+    "energy_loss_per_turn": 0.0003638, # 363.8 keV
+    "harmonic_number": 176,
+    "damping_time": 0.025194,
+    "energy_spread": 7.69e-4,
+    "sigma_z0": 3.37e-11, # 10.1 mm / c
+}
+
+MAX_IV_3GEV_RING_LOADED = {
+    "name": "MAX IV 3 GeV (Updated)",
+    "circumference": 528.0,
+    "frequency": 99.931,
+    "energy": 3.0,
+    "momentum_compaction": 3.06e-4,
+    "energy_loss_per_turn": 0.0003638, # 363.8 keV
+    "harmonic_number": 176,
+    "damping_time": 0.025194,
+    "energy_spread": 7.69e-4,
+    "sigma_z0": 3.37e-11, # 10.1 mm / c
+}
+
+# Elettra (2.0 GeV)
+ELETTRA_RING = {
+    "name": "Elettra (2.0 GeV)",
+    "circumference": 259.2,
+    "frequency": 499.654,
+    "energy": 2.0,
+    "momentum_compaction": 1.6e-3,
+    "energy_loss_per_turn": 0.0002557, # 255.7 keV
+    "harmonic_number": 432,
 }
 
 # Default RING (pointing to Closed IDs as it was before, but with fixed values)
@@ -223,8 +343,28 @@ PRESETS = {
         }
     },
     "SOLEIL II": {
-        "ring": SOLEIL_II_RING_CLOSED,
+        "ring": SOLEIL_II_RING_OPEN,
         "main_cavity": SOLEIL_II_MAIN_CAVITY,
+        "harmonic_cavity": SOLEIL_II_HARMONIC_CAVITY_3HC,
+        "current": 0.5,
+        "passive_hc": True,
+        "scan_params": {
+            "psi_min": 60.0,
+            "psi_max": 100.0,
+            "psi_points": 60,
+        }
+    },
+    "SOLEIL (Nominal)": {
+        "ring": SOLEIL_NOMINAL_RING,
+        "main_cavity": {
+            "voltage": 1.8,
+            "frequency": 352.197,
+            "harmonic": 416,
+            "Q0": 35000,
+            "Rs": 5.0,
+            "Ncav": 2,
+            "beta": 5.0,
+        },
         "harmonic_cavity": SOLEIL_II_HARMONIC_CAVITY_2HC,
         "current": 0.5,
         "passive_hc": True,
@@ -233,6 +373,196 @@ PRESETS = {
             "psi_max": 100.0,
             "psi_points": 60,
         }
+    },
+    "ESRF-EBS": {
+        "ring": ESRF_EBS_RING,
+        "main_cavity": {
+            "voltage": 6.0,
+            "frequency": 352.202,
+            "harmonic": 992,
+            "Q0": 35000,
+            "Rs": 1.5,
+            "Ncav": 13,
+            "beta": 5.0,
+        },
+        "harmonic_cavity": {
+            "voltage": 1.0,
+            "frequency": 1408.8,
+            "harmonic_number": 4,
+            "Q0": 30000,
+            "Rs": 1.0,
+            "Ncav": 3,
+        },
+        "current": 0.2,
+        "passive_hc": True,
+        "scan_params": {"psi_min": 60.0, "psi_max": 100.0, "psi_points": 60}
+    },
+    "SLS 2.0": {
+        "ring": SLS_2_0_RING,
+        "main_cavity": {
+            "voltage": 2.6,
+            "frequency": 499.654,
+            "harmonic": 484,
+            "Q0": 40000,
+            "Rs": 1.57,
+            "Ncav": 4,
+            "beta": 3.0,
+        },
+        "harmonic_cavity": {
+            "voltage": 0.5,
+            "frequency": 1498.962,
+            "harmonic_number": 3,
+            "Q0": 1e9, # Superconducting
+            "Rs": 1000.0,
+            "Ncav": 1,
+            "beta": 0.0,
+        },
+        "current": 0.4,
+        "passive_hc": True,
+        "scan_params": {"psi_min": 60.0, "psi_max": 110.0, "psi_points": 100}
+    },
+    "BESSY II": {
+        "ring": BESSY_II_RING,
+        "main_cavity": {
+            "voltage": 2.0,
+            "frequency": 499.654,
+            "harmonic": 400,
+            "Q0": 30000,
+            "Rs": 3.0,
+            "Ncav": 4,
+            "beta": 2.0,
+        },
+        "harmonic_cavity": {
+            "voltage": 0.4,
+            "frequency": 1498.962,
+            "harmonic_number": 3,
+            "Q0": 30000,
+            "Rs": 1.0,
+            "Ncav": 1,
+        },
+        "current": 0.3,
+        "passive_hc": True,
+        "scan_params": {"psi_min": 60.0, "psi_max": 100.0, "psi_points": 60}
+    },
+    "PETRA III": {
+        "ring": PETRA_III_RING,
+        "main_cavity": {
+            "voltage": 20.0,
+            "frequency": 499.564,
+            "harmonic": 3840,
+            "Q0": 30000,
+            "Rs": 3.0,
+            "Ncav": 12,
+            "beta": 2.0,
+        },
+        "harmonic_cavity": {
+            "voltage": 4.0,
+            "frequency": 1498.692,
+            "harmonic": 11520,
+            "harmonic_number": 3,
+            "Q0": 30000,
+            "Rs": 1.0,
+            "Ncav": 4,
+        },
+        "current": 0.1,
+        "passive_hc": True,
+        "scan_params": {"psi_min": 60.0, "psi_max": 100.0, "psi_points": 60}
+    },
+    "MAX IV 3 GeV": {
+        "ring": MAX_IV_3GEV_RING_LOADED,
+        "main_cavity": {
+            "voltage": 1.397, # MV
+            "frequency": 99.931,
+            "harmonic": 176,
+            "Q0": 40000,
+            "Rs": 3.14, # Est for 2 cavities
+            "Ncav": 2,
+            "beta": 3.0,
+        },
+        "harmonic_cavity": {
+            "voltage": 0.448, # MV
+            "frequency": 299.793,
+            "harmonic": 528,
+            "harmonic_number": 3,
+            "Q0": 20800,
+            "Rs": 8.25,
+            "R_over_Q": 396.0,
+            "Ncav": 3,
+            "beta": 0.0,
+            "detuning_khz": 75.0,
+        },
+        "current": 0.3, # 300 mA
+        "passive_hc": True,
+        "scan_params": {"psi_min": 60.0, "psi_max": 110.0, "psi_points": 100}
+    },
+    "ALBA": {
+        "ring": ALBA_RING,
+        "main_cavity": {
+            "voltage": 3.6,
+            "frequency": 499.654,
+            "harmonic": 448,
+            "Q0": 30000,
+            "Rs": 30.0, # 5 MOhms * 6
+            "Ncav": 6,
+            "beta": 3.0,
+        },
+        "harmonic_cavity": {
+            "voltage": 0.3,
+            "frequency": 1498.962,
+            "harmonic_number": 3,
+            "Q0": 25000,
+            "Rs": 1.0,
+            "Ncav": 1,
+        },
+        "current": 0.4,
+        "passive_hc": True,
+        "scan_params": {"psi_min": 60.0, "psi_max": 100.0, "psi_points": 60}
+    },
+    "Diamond": {
+        "ring": DIAMOND_RING,
+        "main_cavity": {
+            "voltage": 3.0,
+            "frequency": 499.680,
+            "harmonic": 936,
+            "Q0": 1e9, # Superconducting
+            "Rs": 500.0, 
+            "Ncav": 2,
+            "beta": 10.0,
+        },
+        "harmonic_cavity": {
+            "voltage": 0.8,
+            "frequency": 1499.04,
+            "harmonic_number": 3,
+            "Q0": 30000,
+            "Rs": 1.0,
+            "Ncav": 2,
+        },
+        "current": 0.3,
+        "passive_hc": True,
+        "scan_params": {"psi_min": 60.0, "psi_max": 100.0, "psi_points": 60}
+    },
+    "Elettra (2.0 GeV)": {
+        "ring": ELETTRA_RING,
+        "main_cavity": {
+            "voltage": 1.6,
+            "frequency": 499.654,
+            "harmonic": 432,
+            "Q0": 30000,
+            "Rs": 4.0,
+            "Ncav": 4,
+            "beta": 3.0,
+        },
+        "harmonic_cavity": {
+            "voltage": 0.2,
+            "frequency": 1498.962,
+            "harmonic_number": 3,
+            "Q0": 25000,
+            "Rs": 1.0,
+            "Ncav": 1,
+        },
+        "current": 0.3,
+        "passive_hc": True,
+        "scan_params": {"psi_min": 60.0, "psi_max": 100.0, "psi_points": 60}
     },
     "Custom": {
         "ring": {

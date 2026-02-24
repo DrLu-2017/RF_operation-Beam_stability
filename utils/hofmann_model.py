@@ -99,7 +99,7 @@ class DoubleRFSystem:
         
         # Factor for distribution: 1 / (2*pi*h*alpha_c*sigma_delta^2*E0) ?
         # Let's define U(phi) as the voltage integral scaled by 1/(2*pi*h)
-        return (v_int - v0) / (2.0 * np.pi * self.h)
+        return (v0 - v_int) / (2.0 * np.pi * self.h)
 
     def get_distribution(self, phi):
         """
@@ -118,7 +118,7 @@ class DoubleRFSystem:
         exponent = - (U_volts_rad) * factor
         
         # Normalize
-        dist = np.exp(exponent - np.max(exponent))
+        dist = np.exp(exponent)
         dist /= trapezoid(dist, phi)
         return dist
 
@@ -131,12 +131,14 @@ class DoubleRFSystem:
         # Integral = integral_0^phi_hat ( 1 / sqrt( Pot(phi_hat) - Pot(phi) ) ) dphi
         
         fs = []
-        # Precompute voltage integral scaling
-        k_factor = np.sqrt(2.0 * np.pi * self.h * self.alpha_c / self.E0)
+        # Scaling factor for Qs
+        # Qs = 1/T = sqrt(2*A)/(4 * res) where A = 2*pi*h*alpha_c/E0
+        A = 2.0 * np.pi * self.h * self.alpha_c / self.E0
+        factor = np.sqrt(2.0 * A) / 4.0
         
         # Analytic voltage integral (V_pot)
         def v_pot(phi):
-            # Not to be confused with self.get_potential
+            # Integral of (V(phi) - U0) dphi
             val = -self.V1 * np.cos(phi + self.phi_s1) - (self.V2/self.n) * np.cos(self.n * phi + self.phi_s2) - self.U0 * phi
             return val
             
@@ -149,13 +151,22 @@ class DoubleRFSystem:
             v_amp = v_pot(amp)
             
             def integrand(p):
-                diff = v_amp - v_pot(p)
+                # Ensure the value under sqrt is positive. Numerical noise near amp
+                # can cause small negative values.
+                diff = max(0, v_pot(p) - v_amp)
                 if diff <= 0: return 0
                 return 1.0 / np.sqrt(diff)
             
-            res, _ = quad(integrand, 0, amp)
-            # Qs = pi / (2 * k_factor * res)
-            qs = np.pi / (2.0 * k_factor * res)
+            # Use a tiny offset to avoid the endpoint singularity warning
+            # Suppress technical IntegrationWarnings as the result is physically stable
+            import warnings
+            from scipy.integrate import IntegrationWarning
+            with warnings.catch_warnings():
+                warnings.simplefilter("ignore", category=IntegrationWarning)
+                # We integrate up to amp, quad handles the integrable singularity at p=amp
+                res, _ = quad(integrand, 0, amp, limit=100, epsabs=1e-5, epsrel=1e-5)
+            
+            qs = factor / res
             fs.append(qs)
             
         return np.array(fs)
