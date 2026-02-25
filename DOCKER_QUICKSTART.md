@@ -1,109 +1,109 @@
-# 🐳 Docker 完整镜像快速开始
+# 🐳 Docker Complete Image Quickstart
 
-## 🎯 目标
+## 🎯 Objective
 
-创建一个包含所有依赖的 Docker 镜像，其他人只需运行 Docker 就可以使用 ALBuMS，无需安装 mbtrack2 和 pycolleff。
+Create a Docker image containing all dependencies, so others can use ALBuMS by simply running Docker, without having to install mbtrack2 and pycolleff.
 
 ---
 
-## ⚡ 快速开始（3 步）
+## ⚡ Quick Start (3 Steps)
 
-### 步骤 1：构建镜像
+### Step 1: Build the Image
 
 ```bash
 cd /home/lu/streamlit/DRFB
 ./build_complete_docker.sh
 ```
 
-按提示操作：
-- 选择 "1" (使用本地依赖)
-- 选择 "y" (导出镜像)
-- 选择 "y" (压缩镜像)
+Follow the prompts:
+- Select "1" (Use local dependencies)
+- Select "y" (Export image)
+- Select "y" (Compress image)
 
-### 步骤 2：测试镜像
+### Step 2: Test the Image
 
 ```bash
 docker run -p 8501:8501 albums-streamlit:latest
 ```
 
-打开浏览器访问 http://localhost:8501
+Open your browser and visit http://localhost:8501
 
-### 步骤 3：分享
+### Step 3: Share
 
-将生成的 `albums-streamlit-complete-YYYYMMDD.tar.gz` 文件分享给其他人。
+Share the generated `albums-streamlit-complete-YYYYMMDD.tar.gz` file with others.
 
 ---
 
-## 📦 镜像包含的内容
+## 📦 What's in the Image
 
-✅ **完整的计算环境**：
+✅ **Complete Computing Environment**:
 - Python 3.10
-- mbtrack2 (v0.9.1) - 粒子追踪库
-- pycolleff (v0.3.0) - 集体效应库
-- 所有 Python 依赖
+- mbtrack2 (v0.9.1) - Particle tracking library
+- pycolleff (v0.3.0) - Collective effects library
+- All Python dependencies
 
-✅ **ALBuMS 应用**：
+✅ **ALBuMS Application**:
 - Streamlit UI
-- 所有页面和功能
-- 预设配置
-- 示例文件
+- All pages and features
+- Preset configurations
+- Example files
 
-✅ **即开即用**：
-- 无需安装任何依赖
-- 无需配置环境
-- 一条命令启动
-
----
-
-## 📊 预期大小
-
-- **Docker 镜像**: ~2-3 GB
-- **压缩后 tar.gz**: ~800 MB - 1.2 GB
+✅ **Ready to Use**:
+- No need to install any dependencies
+- No environment configuration required
+- Start with a single command
 
 ---
 
-## 🚀 接收者如何使用
+## 📊 Expected Size
 
-### 方法 1：使用 tar.gz 文件
+- **Docker Image**: ~2-3 GB
+- **Compressed tar.gz**: ~800 MB - 1.2 GB
+
+---
+
+## 🚀 How Recipients Use It
+
+### Method 1: Using the tar.gz file
 
 ```bash
-# 1. 解压
+# 1. Decompress
 gunzip albums-streamlit-complete-20260201.tar.gz
 
-# 2. 加载镜像
+# 2. Load the image
 docker load -i albums-streamlit-complete-20260201.tar
 
-# 3. 运行
+# 3. Run
 docker run -p 8501:8501 albums-streamlit:latest
 
-# 4. 访问 http://localhost:8501
+# 4. Visit http://localhost:8501
 ```
 
-### 方法 2：使用 Docker Hub（如果你上传了）
+### Method 2: Using Docker Hub (if uploaded)
 
 ```bash
-# 直接运行
+# Run directly
 docker run -p 8501:8501 drlu2017/albums-streamlit:latest
 ```
 
 ---
 
-## 📋 完整文档
+## 📋 Full Documentation
 
-- **[DOCKER_GUIDE.md](DOCKER_GUIDE.md)** - 详细的 Docker 指南
-- **[README.md](README.md)** - 项目说明
-- **[INSTALLATION_GUIDE.md](INSTALLATION_GUIDE.md)** - 本地安装指南
+- **[DOCKER_GUIDE.md](DOCKER_GUIDE.md)** - Detailed Docker Guide
+- **[README.md](README.md)** - Project Description
+- **[INSTALLATION_GUIDE.md](INSTALLATION_GUIDE.md)** - Local Installation Guide
 
 ---
 
-## 🔍 验证镜像
+## 🔍 Verify the Image
 
-构建后，验证镜像包含所有依赖：
+After building, verify that the image contains all dependencies:
 
 ```bash
 docker run -it albums-streamlit:latest /bin/bash
 
-# 在容器中测试
+# Test inside the container
 python -c "import mbtrack2; print('✓ mbtrack2')"
 python -c "from pycolleff.longitudinal_equilibrium import LongitudinalEquilibrium; print('✓ pycolleff')"
 python -c "from albums.robinson import RobinsonModes; print('✓ ALBuMS')"
@@ -113,15 +113,15 @@ exit
 
 ---
 
-## 💡 提示
+## 💡 Tips
 
-1. **首次构建**需要 10-20 分钟（取决于网络速度）
-2. **后续构建**会快很多（Docker 缓存）
-3. **压缩镜像**可以减少 50-70% 的文件大小
-4. **使用 Docker Hub** 分享最方便（无需传输大文件）
+1. **First-time build** takes 10-20 minutes (depending on network speed).
+2. **Subsequent builds** will be much faster (Docker cache).
+3. **Compressing the image** can reduce file size by 50-70%.
+4. **Using Docker Hub** is the most convenient way to share (no need to transfer large files).
 
 ---
 
-## 🆘 需要帮助？
+## 🆘 Need Help?
 
-查看 [DOCKER_GUIDE.md](DOCKER_GUIDE.md) 获取详细说明和故障排除。
+Check [DOCKER_GUIDE.md](DOCKER_GUIDE.md) for detailed instructions and troubleshooting.

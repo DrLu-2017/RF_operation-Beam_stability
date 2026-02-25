@@ -63,7 +63,7 @@ import plotly.graph_objects as go
 st.set_page_config(page_title="Semi-Analytic", page_icon="📈", layout="wide")
 
 if not st.session_state.get("authentication_status"):
-    st.info("请先前往主页 (Home) 登录。 / Please login from the Home page.")
+    st.info("Please login from the Home page.")
     st.stop()
 
 st.title("📈 Semi-Analytic Tools")

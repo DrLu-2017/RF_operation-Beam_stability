@@ -187,5 +187,5 @@ with st.sidebar:
     st.markdown("---")
     st.markdown("### System Status")
     st.success("Backend: Connected")
-    st.info("Version: 1.0.0 (DRFB Edition)")
+    st.info("Version: 1.1.0 (DRFB Edition)")
 

@@ -1,38 +1,38 @@
-# 安装 ALBuMS 完整模式指南
+# ALBuMS Full Mode Installation Guide
 
-## 当前状态
+## Current Status
 
-你的 ALBuMS 应用目前运行在 **UI 模式**：
-- ✅ 可以配置参数
-- ✅ 可以保存/加载配置
-- ✅ 可以使用预设
-- ❌ 不能运行物理模拟
+Your ALBuMS application is currently running in **UI Mode**:
+- ✅ Configure parameters
+- ✅ Save/Load configurations
+- ✅ Use presets
+- ❌ Cannot run physical simulations
 
-要启用**完整模式**（运行实际模拟），需要安装 `mbtrack2` 库。
+To enable **Full Mode** (running actual simulations), you need to install the `mbtrack2` library.
 
 ---
 
-## 安装选项
+## Installation Options
 
-### 选项 1：从 GitLab 安装 mbtrack2（推荐）
+### Option 1: Install mbtrack2 from GitLab (Recommended)
 
-`mbtrack2` 是 SOLEIL 同步辐射光源开发的粒子追踪库。
+`mbtrack2` is a particle tracking library developed at Synchrotron SOLEIL.
 
-#### 步骤：
+#### Steps:
 
-1. **检查是否有访问权限**
+1. **Check for access permissions**
    ```bash
-   # mbtrack2 通常托管在 SOLEIL 的 GitLab 上
-   # 你可能需要访问权限
+   # mbtrack2 is typically hosted on SOLEIL's GitLab
+   # You may need access permissions
    ```
 
-2. **克隆仓库**（如果有权限）
+2. **Clone the repository** (if you have permission)
    ```bash
    cd /home/lu/streamlit/DRFB
    git clone https://gitlab.synchrotron-soleil.fr/pa/collective-effects/mbtrack2.git mbtrack2-stable
    ```
 
-3. **安装依赖**
+3. **Install dependencies**
    ```bash
    source .venv/bin/activate
    cd mbtrack2-stable
@@ -41,32 +41,32 @@
 
 ---
 
-### 选项 2：使用 Docker（最简单，推荐用于分享）
+### Option 2: Use Docker (Easiest, recommended for sharing)
 
-如果你主要是想分享给其他人使用，**强烈推荐使用 Docker**：
+If you primarily want to share the tool with others, **using Docker is highly recommended**:
 
-#### 优点：
-- ✅ 不需要手动安装 mbtrack2
-- ✅ 环境完全一致
-- ✅ 接收者无需配置
-- ✅ 已有 Dockerfile 配置
+#### Advantages:
+- ✅ No need to manually install mbtrack2
+- ✅ Completely consistent environment
+- ✅ No configuration needed by the recipient
+- ✅ Dockerfile is already configured
 
-#### 步骤：
+#### Steps:
 
-1. **安装 Docker**（如果还没安装）
+1. **Install Docker** (if not already installed)
    ```bash
    # Ubuntu/Debian
    sudo apt update
    sudo apt install docker.io docker-compose
    
-   # 添加用户到 docker 组（避免每次都用 sudo）
+   # Add your user to the docker group (to avoid using sudo every time)
    sudo usermod -aG docker $USER
-   # 注销并重新登录使更改生效
+   # Log out and log back in for changes to take effect
    ```
 
-2. **使用项目的 Dockerfile**
+2. **Use the project's Dockerfile**
    
-   你的项目已经有一个 Dockerfile，它基于 SOLEIL 的 mbtrack2 镜像：
+   Your project already has a Dockerfile based on SOLEIL's mbtrack2 image:
    ```bash
    cd /home/lu/streamlit/DRFB
    docker build -t albums .
@@ -75,70 +75,70 @@
 
 ---
 
-### 选项 3：仅用于演示/配置（当前模式）
+### Option 3: For Demonstration/Configuration Only (Current Mode)
 
-如果你**不需要运行实际模拟**，只是想：
-- 配置参数
-- 保存配置
-- 分享配置给其他人
-- 教学演示
+If you **don't need to run actual simulations** and just want to:
+- Configure parameters
+- Save configurations
+- Share configurations with others
+- Instructional demonstrations
 
-那么**当前的 UI 模式已经足够**，无需安装 mbtrack2。
-
----
-
-## 推荐方案
-
-### 如果你是为了自己使用：
-**→ 选项 2（Docker）** - 最简单，最可靠
-
-### 如果你是为了分享给其他人：
-**→ 选项 2（Docker）** - 接收者只需运行 `docker run`
-
-### 如果你只需要配置参数：
-**→ 选项 3（当前模式）** - 已经可以使用，无需额外安装
+Then **the current UI Mode is sufficient**, and no mbtrack2 installation is required.
 
 ---
 
-## 快速决策
+## Recommended Strategy
 
-**问题 1：你需要运行实际的物理模拟吗？**
-- 是 → 需要安装 mbtrack2（选项 1 或 2）
-- 否 → 当前模式已足够（选项 3）
+### If you are using it for yourself:
+**→ Option 2 (Docker)** - Simplest and most reliable.
 
-**问题 2：你有 SOLEIL GitLab 访问权限吗？**
-- 是 → 可以使用选项 1
-- 否 → 使用选项 2（Docker）
+### If you are sharing it with others:
+**→ Option 2 (Docker)** - Recipients only need to run `docker run`.
 
-**问题 3：你主要是为了分享吗？**
-- 是 → 强烈推荐选项 2（Docker）
-- 否 → 根据需求选择
+### If you only need to configure parameters:
+**→ Option 3 (Current Mode)** - Ready to use, no extra installation as you already have it.
 
 ---
 
-## Docker 快速开始（推荐）
+## Quick Decision Matrix
+
+**Question 1: Do you need to run actual physical simulations?**
+- Yes → Need to install mbtrack2 (Option 1 or 2)
+- No → Current mode is sufficient (Option 3)
+
+**Question 2: Do you have SOLEIL GitLab access?**
+- Yes → You can use Option 1
+- No → Use Option 2 (Docker)
+
+**Question 3: Are you primarily sharing this with others?**
+- Yes → Highly recommend Option 2 (Docker)
+- No → Choose based on your needs
+
+---
+
+## Docker Quick Start (Recommended)
 
 ```bash
-# 1. 安装 Docker
+# 1. Install Docker
 sudo apt update
 sudo apt install docker.io
 
-# 2. 构建镜像
+# 2. Build the image
 cd /home/lu/streamlit/DRFB
 sudo docker build -t albums .
 
-# 3. 运行应用
+# 3. Run the application
 sudo docker run -p 8501:8501 albums
 
-# 4. 访问应用
-# 打开浏览器访问 http://localhost:8501
+# 4. Access the application
+# Open your browser and visit http://localhost:8501
 ```
 
 ---
 
-## 需要帮助？
+## Need Help?
 
-如果你决定了使用哪个选项，告诉我，我可以帮你：
-1. 安装 Docker
-2. 构建 Docker 镜像
-3. 或者配置其他安装方式
+If you've decided which option to use, let me know, and I can help you:
+1. Install Docker
+2. Build the Docker image
+3. Or configure another installation method

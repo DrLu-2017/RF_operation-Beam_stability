@@ -1,32 +1,32 @@
-# Docker 安装指南
+# Docker Installation Guide
 
-## 🐳 在 Ubuntu/Debian 上安装 Docker
+## 🐳 Installing Docker on Ubuntu/Debian
 
-### 方法 1：使用官方脚本（最简单）
+### Method 1: Using the Official Script (Easiest)
 
 ```bash
-# 下载并运行 Docker 官方安装脚本
+# Download and run the official Docker installation script
 curl -fsSL https://get.docker.com -o get-docker.sh
 sudo sh get-docker.sh
 
-# 将当前用户添加到 docker 组（避免每次都用 sudo）
+# Add the current user to the docker group (to avoid using sudo every time)
 sudo usermod -aG docker $USER
 
-# 注销并重新登录，或运行以下命令使更改生效
+# Log out and log back in, or run the following command for changes to take effect
 newgrp docker
 
-# 验证安装
+# Verify the installation
 docker --version
 docker run hello-world
 ```
 
-### 方法 2：手动安装（推荐用于生产环境）
+### Method 2: Manual Installation (Recommended for production)
 
 ```bash
-# 1. 更新包索引
+# 1. Update package index
 sudo apt update
 
-# 2. 安装必要的包
+# 2. Install necessary packages
 sudo apt install -y \
     apt-transport-https \
     ca-certificates \
@@ -34,96 +34,96 @@ sudo apt install -y \
     gnupg \
     lsb-release
 
-# 3. 添加 Docker 的官方 GPG 密钥
+# 3. Add Docker's official GPG key
 sudo mkdir -p /etc/apt/keyrings
 curl -fsSL https://download.docker.com/linux/ubuntu/gpg | sudo gpg --dearmor -o /etc/apt/keyrings/docker.gpg
 
-# 4. 设置 Docker 仓库
+# 4. Set up the Docker repository
 echo \
   "deb [arch=$(dpkg --print-architecture) signed-by=/etc/apt/keyrings/docker.gpg] https://download.docker.com/linux/ubuntu \
   $(lsb_release -cs) stable" | sudo tee /etc/apt/sources.list.d/docker.list > /dev/null
 
-# 5. 更新包索引
+# 5. Update package index
 sudo apt update
 
-# 6. 安装 Docker Engine
+# 6. Install Docker Engine
 sudo apt install -y docker-ce docker-ce-cli containerd.io docker-buildx-plugin docker-compose-plugin
 
-# 7. 将用户添加到 docker 组
+# 7. Add user to the docker group
 sudo usermod -aG docker $USER
 
-# 8. 启动 Docker 服务
+# 8. Start Docker service
 sudo systemctl start docker
 sudo systemctl enable docker
 
-# 9. 注销并重新登录，然后验证
+# 9. Log out and log back in, then verify
 docker --version
 docker run hello-world
 ```
 
-### 方法 3：使用 apt（最快）
+### Method 3: Using apt (Fastest)
 
 ```bash
-# 安装 Docker
+# Install Docker
 sudo apt update
 sudo apt install -y docker.io docker-compose
 
-# 启动 Docker
+# Start Docker
 sudo systemctl start docker
 sudo systemctl enable docker
 
-# 添加用户到 docker 组
+# Add user to the docker group
 sudo usermod -aG docker $USER
 
-# 注销并重新登录，或运行
+# Log out and log back in, or run:
 newgrp docker
 
-# 验证
+# Verify
 docker --version
 ```
 
 ---
 
-## ✅ 验证安装
+## ✅ Verify Installation
 
-安装完成后，运行以下命令验证：
+After installation, run the following commands to verify:
 
 ```bash
-# 检查 Docker 版本
+# Check Docker version
 docker --version
 
-# 检查 Docker Compose 版本
+# Check Docker Compose version
 docker-compose --version
 
-# 运行测试容器
+# Run a test container
 docker run hello-world
 
-# 检查 Docker 服务状态
+# Check Docker service status
 sudo systemctl status docker
 ```
 
-如果看到 "Hello from Docker!"，说明安装成功！
+If you see "Hello from Docker!", the installation was successful!
 
 ---
 
-## 🔧 安装后配置
+## 🔧 Post-Installation Configuration
 
-### 允许非 root 用户运行 Docker
+### Allow non-root users to run Docker
 
 ```bash
-# 添加当前用户到 docker 组
+# Add current user to the docker group
 sudo usermod -aG docker $USER
 
-# 应用更改（选择其一）
-# 方法 1: 注销并重新登录
-# 方法 2: 运行以下命令
+# Apply changes (choose one)
+# Method 1: Log out and log back in
+# Method 2: Run the following command
 newgrp docker
 
-# 验证（不需要 sudo）
+# Verify (no sudo needed)
 docker run hello-world
 ```
 
-### 配置 Docker 开机自启
+### Configure Docker to start on boot
 
 ```bash
 sudo systemctl enable docker
@@ -131,98 +131,98 @@ sudo systemctl enable docker
 
 ---
 
-## 🚀 安装完成后
+## 🚀 After Installation
 
-安装 Docker 后，返回项目目录并构建镜像：
+Once Docker is installed, return to the project directory and build the image:
 
 ```bash
 cd /home/lu/streamlit/DRFB
 
-# 构建 ALBuMS Docker 镜像
+# Build ALBuMS Docker image
 ./build_complete_docker.sh
 ```
 
 ---
 
-## 🆘 故障排除
+## 🆘 Troubleshooting
 
-### 问题 1：权限被拒绝
+### Issue 1: Permission Denied
 
-**错误**：`permission denied while trying to connect to the Docker daemon socket`
+**Error**: `permission denied while trying to connect to the Docker daemon socket`
 
-**解决方案**：
+**Solution**:
 ```bash
-# 添加用户到 docker 组
+# Add user to the docker group
 sudo usermod -aG docker $USER
 
-# 注销并重新登录，或运行
+# Log out and log back in, or run:
 newgrp docker
 ```
 
-### 问题 2：Docker 服务未运行
+### Issue 2: Docker Service Not Running
 
-**错误**：`Cannot connect to the Docker daemon`
+**Error**: `Cannot connect to the Docker daemon`
 
-**解决方案**：
+**Solution**:
 ```bash
-# 启动 Docker 服务
+# Start Docker service
 sudo systemctl start docker
 
-# 设置开机自启
+# Enable start on boot
 sudo systemctl enable docker
 ```
 
-### 问题 3：端口已被占用
+### Issue 3: Port Already Allocated
 
-**错误**：`port is already allocated`
+**Error**: `port is already allocated`
 
-**解决方案**：
+**Solution**:
 ```bash
-# 查看占用端口的进程
+# Check which process is using the port
 sudo lsof -i :8501
 
-# 或使用不同的端口
+# Or use a different port
 docker run -p 8502:8501 albums-streamlit:latest
 ```
 
 ---
 
-## 📚 更多资源
+## 📚 More Resources
 
-- [Docker 官方文档](https://docs.docker.com/engine/install/ubuntu/)
-- [Docker Compose 文档](https://docs.docker.com/compose/)
+- [Official Docker Documentation](https://docs.docker.com/engine/install/ubuntu/)
+- [Docker Compose Documentation](https://docs.docker.com/compose/)
 - [Docker Hub](https://hub.docker.com/)
 
 ---
 
-## 💡 快速命令参考
+## 💡 Quick Command Reference
 
 ```bash
-# 查看运行的容器
+# List running containers
 docker ps
 
-# 查看所有容器
+# List all containers
 docker ps -a
 
-# 停止容器
+# Stop a container
 docker stop <container_id>
 
-# 删除容器
+# Remove a container
 docker rm <container_id>
 
-# 查看镜像
+# List images
 docker images
 
-# 删除镜像
+# Remove an image
 docker rmi <image_id>
 
-# 查看日志
+# View logs
 docker logs <container_id>
 
-# 进入容器
+# Enter a container
 docker exec -it <container_id> /bin/bash
 ```
 
 ---
 
-**安装完成后，运行 `./build_complete_docker.sh` 开始构建 ALBuMS 镜像！**
+**After installation is complete, run `./build_complete_docker.sh` to begin building your ALBuMS image!**

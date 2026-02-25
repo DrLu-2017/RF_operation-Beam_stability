@@ -24,7 +24,7 @@ st.set_page_config(
 )
 
 if not st.session_state.get("authentication_status"):
-    st.info("请先前往主页 (Home) 登录。 / Please login from the Home page.")
+    st.info("Please login from the Home page.")
     st.stop()
 
 
@@ -770,8 +770,8 @@ with mon_tab:
                     st.error(f"Error checking status: {str(e)}")
                     
     with col_stat2:
-        st.write("实时监测开启后，将每隔几秒自动获取最新的日志输出。")
-        live_mon_toggle = st.toggle("🚀 开启实时显示 (Live Monitor)", value=False)
+        st.write("When live monitoring is enabled, the latest log output will be fetched automatically every few seconds.")
+        live_mon_toggle = st.toggle("🚀 Enable Live Monitor", value=False)
         
     if live_mon_toggle:
         live_log_reader(log_file_input, lines_to_read)
@@ -803,7 +803,7 @@ with mon_tab:
                 selected_o_file = st.selectbox("Select a log file to view", o_files)
                 tail_lines_o = st.number_input("Number of lines to read", min_value=10, max_value=5000, value=100, step=50, key="o_tail")
                 
-                live_mon_o_toggle = st.toggle("🚀 开启此文件的实时显示 (Live Monitor)", value=False, key="o_live_toggle")
+                live_mon_o_toggle = st.toggle("🚀 Enable Live Monitor for this file", value=False, key="o_live_toggle")
 
                 if st.button("📖 Read Selected Log File") and not live_mon_o_toggle:
                     with st.spinner("Fetching contents..."):

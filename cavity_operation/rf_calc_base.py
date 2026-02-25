@@ -1,7 +1,7 @@
 import numpy as np
 
 # ============================================================
-# 1. 环参数 (Storage Ring)
+# 1. Storage Ring Parameters
 # ============================================================
 
 E0_GeV = 2.75
@@ -12,13 +12,13 @@ omega0 = 2 * np.pi * f0
 I_min = 0.01e-3              # A
 I_max = 500e-3               # A
 
-# 能量损失 (Phase 2)
+# Energy loss (Phase 2)
 U0 = (487e3 + 359e3)          # eV
 U0 *= 1.602e-19              # J
 
 
 # ============================================================
-# 2. 基本腔 (Fundamental Cavities)
+# 2. Fundamental Cavities
 # ============================================================
 
 ncav = 4
@@ -36,7 +36,7 @@ tau_cav = 2 * Ql / omega0   # s
 
 
 # ============================================================
-# 3. 谐波腔 (Harmonic Cavities)
+# 3. Harmonic Cavities
 # ============================================================
 
 nh = 4
@@ -48,42 +48,42 @@ omega_h0 = 2 * np.pi * fh0
 Qh0 = 31000
 Rh = 0.92e6                  # Ohm
 
-# 平坦势理论电压 (simplified)
+# Flat potential theoretical voltage (simplified)
 Vh_opt = 2 * U0 / (nh * Vf_total)
 
-# 实际采用
+# Actually adopted
 Vh = 400e3                   # V
 
 
 # ============================================================
-# 4. 谐波腔 detuning
+# 4. Harmonic Cavity Detuning
 # ============================================================
 
 delta_fh = (
     1 / 4 * nhcav * Vh / (I_max * Rh) * Qh0 / fh0
 )
 
-# 角频率
+# Angular frequency
 omega_hc = 2 * np.pi * (fh0 + delta_fh)
 
 
 # ============================================================
-# 5. 谐波腔导纳 & 电压
+# 5. Harmonic Cavity Admittance & Voltage
 # ============================================================
 
 Yh = (1 / Rh) * (
     1 + 1j * Qh0 * (omega_hc / omega_h0 - omega_h0 / omega_hc)
 )
 
-# 单个谐波腔感应电压
+# Induced voltage per harmonic cavity
 Vh_cav = I_max / (2 * np.abs(Yh))
 
-# 总谐波电压
+# Total harmonic voltage
 Vh_total = nhcav * Vh_cav
 
 
 # ============================================================
-# 6. 谐波腔功率
+# 6. Harmonic Cavity Power
 # ============================================================
 
 Ph_diss = Vh_cav**2 / (2 * Rh)
@@ -94,7 +94,7 @@ UT0 = U0 + Uh0               # J
 
 
 # ============================================================
-# 7. 同步相位 (Fundamental)
+# 7. Synchronous Phase (Fundamental)
 # ============================================================
 
 phi_s = np.arcsin(UT0 / Vf_total)   # rad
@@ -102,7 +102,7 @@ phi_s_deg = np.degrees(phi_s)
 
 
 # ============================================================
-# 8. 基本腔 detuning (I_max)
+# 8. Fundamental Cavity Detuning (I_max)
 # ============================================================
 
 delta_f = (
@@ -113,14 +113,14 @@ delta_f = (
 
 
 # ============================================================
-# 9. 功率 (Fundamental)
+# 9. Power (Fundamental)
 # ============================================================
 
 Pbeam = UT0 * I_max
 Pf_diss = Vf_cav**2 / (2 * Rsh)
 
 # ============================================================
-# 10. 输出结果
+# 10. Output Results
 # ============================================================
 
 print("========== RF Cavity Summary ==========")

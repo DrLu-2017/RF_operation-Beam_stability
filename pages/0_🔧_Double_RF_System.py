@@ -73,7 +73,7 @@ st.set_page_config(
 )
 
 if not st.session_state.get("authentication_status"):
-    st.info("请先前往主页 (Home) 登录。 / Please login from the Home page.")
+    st.info("Please login from the Home page.")
     st.stop()
 
 st.title("🔧 RF System Analytical Dashboard")

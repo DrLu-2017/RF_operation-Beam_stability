@@ -1,289 +1,289 @@
-# Docker 完整镜像构建和分享指南
+# Docker Complete Image Build and Share Guide
 
-本指南说明如何构建包含所有依赖（mbtrack2、pycolleff）的完整 Docker 镜像，以便分享给其他人使用。
+This guide explains how to build a complete Docker image containing all dependencies (mbtrack2, pycolleff) for sharing with others.
 
-## 📋 准备工作
+## 📋 Prerequisites
 
-确保以下目录存在于项目根目录：
-- ✅ `mbtrack2-stable/` - mbtrack2 库
-- ✅ `collective_effects/` - pycolleff 库
+Ensure the following directories exist in the project root:
+- ✅ `mbtrack2-stable/` - mbtrack2 library
+- ✅ `collective_effects/` - pycolleff library
 
-这些目录已经在你的本地环境中，会被包含在 Docker 镜像中。
+These directories are already in your local environment and will be included in the Docker image.
 
 ---
 
-## 🚀 方法 1：使用自动化脚本（推荐）
+## 🚀 Method 1: Using the Automation Script (Recommended)
 
-### 步骤 1：运行构建脚本
+### Step 1: Run the Build Script
 
 ```bash
 cd /home/lu/streamlit/DRFB
 ./build_complete_docker.sh
 ```
 
-脚本会：
-1. 检查依赖目录
-2. 构建 Docker 镜像
-3. 可选：导出镜像为 tar 文件
-4. 可选：压缩镜像文件
+The script will:
+1. Check for dependency directories.
+2. Build the Docker image.
+3. Optional: Export the image to a tar file.
+4. Optional: Compress the image file.
 
-### 步骤 2：测试镜像
+### Step 2: Test the Image
 
 ```bash
-# 运行容器
+# Run the container
 docker run -p 8501:8501 albums-streamlit:latest
 
-# 访问应用
-# 打开浏览器访问 http://localhost:8501
+# Access the application
+# Open your browser and visit http://localhost:8501
 ```
 
-### 步骤 3：分享镜像
+### Step 3: Share the Image
 
-如果你选择了导出镜像，会生成类似这样的文件：
-- `albums-streamlit-complete-20260201.tar.gz` (压缩版)
-- 或 `albums-streamlit-complete-20260201.tar` (未压缩)
+If you chose to export the image, files similar to these will be generated:
+- `albums-streamlit-complete-20260201.tar.gz` (Compressed)
+- OR `albums-streamlit-complete-20260201.tar` (Uncompressed)
 
-**分享给其他人**：
-1. 将 tar.gz 文件发送给接收者
-2. 接收者运行：
+**Sharing with others**:
+1. Send the tar.gz file to the recipient.
+2. The recipient runs:
    ```bash
-   # 解压（如果是 .gz 文件）
+   # Decompress (if it's a .gz file)
    gunzip albums-streamlit-complete-20260201.tar.gz
    
-   # 加载镜像
+   # Load the image
    docker load -i albums-streamlit-complete-20260201.tar
    
-   # 运行应用
+   # Run the application
    docker run -p 8501:8501 albums-streamlit:latest
    
-   # 访问 http://localhost:8501
+   # Visit http://localhost:8501
    ```
 
 ---
 
-## 🔧 方法 2：手动构建
+## 🔧 Method 2: Manual Build
 
-### 使用本地依赖（推荐）
+### Using Local Dependencies (Recommended)
 
 ```bash
-# 构建镜像
+# Build the image
 docker build -f Dockerfile.local -t albums-streamlit:latest .
 
-# 运行
+# Run
 docker run -p 8501:8501 albums-streamlit:latest
 ```
 
-### 从网络下载依赖
+### Downloading Dependencies from the Network
 
 ```bash
-# 构建镜像（需要访问 GitLab 和 GitHub）
+# Build the image (requires access to GitLab and GitHub)
 docker build -f Dockerfile -t albums-streamlit:latest .
 
-# 运行
+# Run
 docker run -p 8501:8501 albums-streamlit:latest
 ```
 
 ---
 
-## 📦 导出和压缩镜像
+## 📦 Exporting and Compressing the Image
 
-### 导出镜像
+### Export the Image
 
 ```bash
-# 导出为 tar 文件
+# Export to a tar file
 docker save -o albums-streamlit.tar albums-streamlit:latest
 
-# 查看文件大小
+# Check file size
 du -h albums-streamlit.tar
 ```
 
-### 压缩镜像（推荐用于分享）
+### Compress the Image (Recommended for sharing)
 
 ```bash
-# 压缩 tar 文件
+# Compress the tar file
 gzip albums-streamlit.tar
 
-# 这会创建 albums-streamlit.tar.gz
-# 压缩后大小通常减少 50-70%
+# This creates albums-streamlit.tar.gz
+# Compressed size is typically reduced by 50-70%
 ```
 
 ---
 
-## 🌐 上传到 Docker Hub（可选）
+## 🌐 Uploading to Docker Hub (Optional)
 
-如果你想通过 Docker Hub 分享：
+If you want to share via Docker Hub:
 
-### 步骤 1：登录 Docker Hub
+### Step 1: Login to Docker Hub
 
 ```bash
 docker login
-# 输入你的 Docker Hub 用户名和密码
+# Enter your Docker Hub username and password
 ```
 
-### 步骤 2：标记镜像
+### Step 2: Tag the Image
 
 ```bash
-# 替换 yourusername 为你的 Docker Hub 用户名
+# Replace yourusername with your Docker Hub username
 docker tag albums-streamlit:latest yourusername/albums-streamlit:latest
 ```
 
-### 步骤 3：推送到 Docker Hub
+### Step 3: Push to Docker Hub
 
 ```bash
 docker push yourusername/albums-streamlit:latest
 ```
 
-### 步骤 4：其他人使用
+### Step 4: For Others to Use
 
-其他人可以直接运行：
+Others can directly run:
 ```bash
 docker run -p 8501:8501 yourusername/albums-streamlit:latest
 ```
 
 ---
 
-## 📊 镜像大小优化
+## 📊 Image Size Optimization
 
-### 当前镜像包含：
+### The current image includes:
 - ✅ Python 3.10
-- ✅ Streamlit 和所有 UI 依赖
-- ✅ mbtrack2 (粒子追踪库)
-- ✅ pycolleff (集体效应库)
-- ✅ 所有 Python 依赖
-- ✅ ALBuMS 应用代码
+- ✅ Streamlit and all UI dependencies
+- ✅ mbtrack2 (Particle tracking library)
+- ✅ pycolleff (Collective effects library)
+- ✅ All Python dependencies
+- ✅ ALBuMS application code
 
-### 预期大小：
-- 未压缩镜像: ~2-3 GB
-- 压缩后: ~800 MB - 1.2 GB
+### Expected Size:
+- Uncompressed Image: ~2-3 GB
+- Compressed: ~800 MB - 1.2 GB
 
-### 减小镜像大小的建议：
-1. 使用 `.dockerignore` 排除不必要的文件
-2. 使用多阶段构建（已在 Dockerfile 中实现）
-3. 清理临时文件（已在 Dockerfile 中实现）
+### Suggestions to Reduce Image Size:
+1. Use `.dockerignore` to exclude unnecessary files.
+2. Use multi-stage builds (already implemented in the Dockerfile).
+3. Clean up temporary files (already implemented in the Dockerfile).
 
 ---
 
-## 🔍 验证镜像
+## 🔍 Verify the Image
 
-### 检查镜像是否包含所有依赖
+### Check if the image contains all dependencies
 
 ```bash
-# 运行容器并进入 shell
+# Run the container and enter the shell
 docker run -it albums-streamlit:latest /bin/bash
 
-# 在容器中测试
+# Test inside the container
 python -c "import mbtrack2; print('mbtrack2:', mbtrack2.__version__)"
 python -c "from pycolleff.longitudinal_equilibrium import LongitudinalEquilibrium; print('pycolleff: OK')"
 python -c "from albums.robinson import RobinsonModes; print('ALBuMS: OK')"
 
-# 退出
+# Exit
 exit
 ```
 
 ---
 
-## 📝 使用 docker-compose
+## 📝 Using docker-compose
 
-创建 `docker-compose.yml`（已提供）：
+Create `docker-compose.yml` (already provided):
 
 ```bash
-# 启动
+# Start
 docker-compose up
 
-# 后台运行
+# Run in background
 docker-compose up -d
 
-# 停止
+# Stop
 docker-compose down
 ```
 
 ---
 
-## 🆘 故障排除
+## 🆘 Troubleshooting
 
-### 问题 1：构建失败 - 找不到 mbtrack2-stable
+### Issue 1: Build Failed - mbtrack2-stable not found
 
-**解决方案**：
+**Solution**:
 ```bash
-# 确保目录存在
+# Ensure directories exist
 ls -la mbtrack2-stable/
 ls -la collective_effects/
 ```
 
-### 问题 2：镜像太大
+### Issue 2: Image is too large
 
-**解决方案**：
-- 使用压缩：`gzip albums-streamlit.tar`
-- 或使用 Docker Hub 分享（不需要传输文件）
+**Solution**:
+- Use compression: `gzip albums-streamlit.tar`
+- Or share via Docker Hub (no need to transfer files)
 
-### 问题 3：Docker 没有安装
+### Issue 3: Docker is not installed
 
-**解决方案**：
+**Solution**:
 ```bash
 # Ubuntu/Debian
 sudo apt update
 sudo apt install docker.io docker-compose
 
-# 添加用户到 docker 组
+# Add user to the docker group
 sudo usermod -aG docker $USER
-# 注销并重新登录
+# Log out and log back in
 ```
 
 ---
 
-## 📚 接收者使用指南
+## 📚 Recipient User Guide
 
-如果你要分享给其他人，给他们这个简单的指南：
+If you are sharing with others, give them this simple guide:
 
-### 使用 tar 文件
+### Using a tar file
 
 ```bash
-# 1. 解压（如果是 .gz 文件）
+# 1. Decompress (if it's a .gz file)
 gunzip albums-streamlit-complete-YYYYMMDD.tar.gz
 
-# 2. 加载镜像
+# 2. Load the image
 docker load -i albums-streamlit-complete-YYYYMMDD.tar
 
-# 3. 运行应用
+# 3. Run the application
 docker run -p 8501:8501 albums-streamlit:latest
 
-# 4. 打开浏览器访问
+# 4. Open browser to access
 # http://localhost:8501
 ```
 
-### 使用 Docker Hub
+### Using Docker Hub
 
 ```bash
-# 直接运行（会自动下载）
+# Run directly (will download automatically)
 docker run -p 8501:8501 yourusername/albums-streamlit:latest
 
-# 访问 http://localhost:8501
+# Visit http://localhost:8501
 ```
 
 ---
 
-## ✅ 总结
+## ✅ Summary
 
-**推荐的分享流程**：
+**Recommended Sharing Workflow**:
 
-1. **构建镜像**：
+1. **Build the image**:
    ```bash
    ./build_complete_docker.sh
    ```
 
-2. **选择分享方式**：
-   - **文件分享**：导出并压缩 tar 文件
-   - **Docker Hub**：推送到 Docker Hub
+2. **Choose sharing method**:
+   - **File sharing**: Export and compress the tar file
+   - **Docker Hub**: Push to Docker Hub
 
-3. **提供给接收者**：
-   - tar.gz 文件 + 使用说明
-   - 或 Docker Hub 链接
+3. **Provide to recipient**:
+   - tar.gz file + usage instructions
+   - OR Docker Hub link
 
-4. **接收者使用**：
-   - 加载镜像或从 Docker Hub 拉取
-   - 运行容器
-   - 访问应用
+4. **Recipient uses**:
+   - Load image or pull from Docker Hub
+   - Run container
+   - Access application
 
 ---
 
-**需要帮助？** 查看项目的 GitHub Issues 或联系维护者。
+**Need help?** Check the project's GitHub Issues or contact the maintainers.

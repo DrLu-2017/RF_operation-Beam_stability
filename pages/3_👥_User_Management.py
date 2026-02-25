@@ -11,12 +11,12 @@ sys.path.insert(0, str(project_root))
 st.set_page_config(page_title="User Management", page_icon="👥", layout="wide")
 
 if not st.session_state.get("authentication_status"):
-    st.info("请先前往主页 (Home) 登录。 / Please login from the Home page.")
+    st.info("Please login from the Home page.")
     st.stop()
 
 is_admin = st.session_state.get("username") == "admin"
 if not is_admin:
-    st.error("权限被拒绝：此页面仅限系统管理员访问。 / Access Denied: Administrator level required.")
+    st.error("Access Denied: Administrator level required.")
     st.stop()
 
 try:

@@ -18,29 +18,29 @@ class RFVoltageCalibrator:
         :param E0: Beam energy (eV)
         :param U0: Energy loss per turn (V)
         """
-        self.f0 = f0                 # RF 频率 (Hz)
-        self.h = h                    # 谐波数
-        self.alpha = alpha            # 动量压缩因子
-        self.E0 = E0                  # 电子束流能量 (eV)
-        self.U0 = U0                  # 单圈能量损失 (V)
-        self.f_rev = self.f0 / self.h # 周转频率
+        self.f0 = f0                 # RF frequency (Hz)
+        self.h = h                   # Harmonic number
+        self.alpha = alpha           # Momentum compaction factor
+        self.E0 = E0                 # Beam energy (eV)
+        self.U0 = U0                 # Energy loss per turn (V)
+        self.f_rev = self.f0 / self.h # Revolution frequency
 
     def calculate_theoretical_fs(self, v_total_v):
-        """根据给定的总电压计算理论同步频率 fs"""
+        """Calculate theoretical synchrotron frequency fs for a given total voltage"""
         if v_total_v <= self.U0:
-            raise ValueError("总电压必须大于单圈能量损失 U0。")
+            raise ValueError("Total voltage must be greater than energy loss U0.")
         sin_phi_s = self.U0 / v_total_v
         cos_phi_s = np.sqrt(max(0, 1 - sin_phi_s**2))
         term = (v_total_v * cos_phi_s * self.alpha * self.h) / (2 * np.pi * self.E0)
         return self.f_rev * np.sqrt(term)
 
     def calculate_calibrated_voltage(self, fs_measured_hz):
-        """根据实测频率推算实际腔体电压"""
+        """Calculate actual cavity voltage based on measured frequency"""
         k = (2 * np.pi * (fs_measured_hz**2) * self.h * self.E0) / ((self.f0**2) * self.alpha)
         return np.sqrt(k**2 + self.U0**2)
 
     def get_calibration_factor(self, v_measured_sum_v, fs_measured_hz):
-        """计算校准系数 (Gain)"""
+        """Calculate calibration factor (Gain)"""
         v_actual = self.calculate_calibrated_voltage(fs_measured_hz)
         return v_actual / v_measured_sum_v
 
