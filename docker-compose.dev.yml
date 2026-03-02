@@ -1,0 +1,65 @@
+version: '3.8'
+
+services:
+  # 生产版本 - 完整包含所有内容
+  albums-prod:
+    build:
+      context: .
+      dockerfile: Dockerfile.local
+    container_name: albums-streamlit-prod
+    ports:
+      - "8501:8501"
+    volumes:
+      - ./data:/app/data
+      - ./examples:/app/examples:ro
+    environment:
+      - STREAMLIT_SERVER_PORT=8501
+      - STREAMLIT_SERVER_ADDRESS=0.0.0.0
+      - STREAMLIT_SERVER_HEADLESS=true
+      - STREAMLIT_BROWSER_GATHER_USAGE_STATS=false
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8501/_stcore/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 40s
+    networks:
+      - albums-network
+
+  # 开发版本 - 支持实时代码更新 (Ubuntu 22 优化)
+  albums-dev:
+    build:
+      context: .
+      dockerfile: Dockerfile.ubuntu22
+    container_name: albums-streamlit-dev
+    ports:
+      - "8502:8501"
+    volumes:
+      # 挂载源代码，实时反映编辑
+      - ./streamlit_app.py:/app/streamlit_app.py
+      - ./pages:/app/pages
+      - ./utils:/app/utils
+      - ./albums:/app/albums
+      - ./tests:/app/tests
+      - ./data:/app/data
+      - ./examples:/app/examples:ro
+      # 保存 Streamlit 缓存
+      - ./.streamlit_cache:/app/.streamlit
+    environment:
+      - STREAMLIT_SERVER_PORT=8501
+      - STREAMLIT_SERVER_ADDRESS=0.0.0.0
+      - STREAMLIT_SERVER_HEADLESS=true
+      - STREAMLIT_BROWSER_GATHER_USAGE_STATS=false
+      - STREAMLIT_CLIENT_LOGGER_LEVEL=debug
+      - PYTHONUNBUFFERED=1
+    stdin_open: true
+    tty: true
+    networks:
+      - albums-network
+    # 自动重启服务，便于开发
+    restart: on-failure:5
+
+networks:
+  albums-network:
+    driver: bridge

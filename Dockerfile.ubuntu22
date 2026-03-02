@@ -1,0 +1,89 @@
+# DRFB Streamlit - Ubuntu 22 Development Image
+# Optimized for local development on Ubuntu 22
+
+FROM ubuntu:22.04
+
+# Prevent interactive prompts
+ENV DEBIAN_FRONTEND=noninteractive
+
+# Set working directory
+WORKDIR /app
+
+# Install system dependencies for Ubuntu 22
+RUN apt-get update && apt-get install -y --no-install-recommends \
+    python3.10 \
+    python3.10-dev \
+    python3.10-venv \
+    python3-pip \
+    build-essential \
+    git \
+    curl \
+    wget \
+    libopenblas-dev \
+    liblapack-dev \
+    gfortran \
+    pkg-config \
+    ca-certificates \
+    && rm -rf /var/lib/apt/lists/*
+
+# Set python3.10 as default
+RUN update-alternatives --install /usr/bin/python3 python3 /usr/bin/python3.10 1 && \
+    update-alternatives --install /usr/bin/python python /usr/bin/python3.10 1
+
+# Upgrade pip
+RUN python3 -m pip install --upgrade pip setuptools wheel
+
+# Copy requirements files
+COPY requirements.txt requirements_streamlit.txt ./
+
+# Install Python dependencies
+RUN pip install --no-cache-dir -r requirements.txt && \
+    pip install --no-cache-dir -r requirements_streamlit.txt
+
+# Copy mbtrack2 and pycolleff from local directories
+COPY mbtrack2-stable /tmp/mbtrack2
+COPY collective_effects /tmp/collective_effects
+
+# Install mbtrack2
+RUN cd /tmp/mbtrack2 && \
+    pip install --no-cache-dir -e . && \
+    echo "✓ mbtrack2 installed successfully"
+
+# Install pycolleff  
+RUN cd /tmp/collective_effects/pycolleff && \
+    pip install --no-cache-dir -e . && \
+    echo "✓ pycolleff installed successfully"
+
+# Clean up temporary directories
+RUN rm -rf /tmp/mbtrack2 /tmp/collective_effects
+
+# Copy application code
+COPY albums ./albums
+COPY pages ./pages
+COPY utils ./utils
+COPY examples ./examples
+COPY docs ./docs
+COPY tests ./tests
+COPY streamlit_app.py .
+COPY .streamlit ./.streamlit
+COPY LICENSE README.md ./
+
+# Create data directory with proper permissions
+RUN mkdir -p /app/data && chmod 777 /app/data
+
+# Expose Streamlit port
+EXPOSE 8501
+
+# Health check
+HEALTHCHECK --interval=30s --timeout=10s --start-period=40s --retries=3 \
+    CMD curl -f http://localhost:8501/_stcore/health || exit 1
+
+# Set environment variables
+ENV STREAMLIT_SERVER_PORT=8501
+ENV STREAMLIT_SERVER_ADDRESS=0.0.0.0
+ENV STREAMLIT_SERVER_HEADLESS=true
+ENV STREAMLIT_BROWSER_GATHER_USAGE_STATS=false
+ENV PYTHONUNBUFFERED=1
+
+# Run Streamlit
+CMD ["streamlit", "run", "streamlit_app.py", "--server.port=8501", "--server.address=0.0.0.0"]

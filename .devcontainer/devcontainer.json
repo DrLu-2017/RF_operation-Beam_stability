@@ -1,0 +1,33 @@
+{
+  "name": "DRFB Development (Ubuntu 22)",
+  "image": "python:3.10-slim",
+  "features": {
+    "ghcr.io/devcontainers/features/docker-in-docker:2": {}
+  },
+  "forwardPorts": [8501],
+  "postCreateCommand": "bash -c 'apt-get update && apt-get install -y build-essential git curl && pip install --no-cache-dir -r requirements.txt && pip install --no-cache-dir -r requirements_streamlit.txt'",
+  "customizations": {
+    "vscode": {
+      "extensions": [
+        "ms-python.python",
+        "ms-python.vscode-pylance",
+        "ms-python.debugpy",
+        "ms-python.black-formatter",
+        "charliermarsh.ruff",
+        "ms-vscode.makefile-tools",
+        "ms-vscode-remote.remote-containers",
+        "streamlit.streamlit"
+      ],
+      "settings": {
+        "python.defaultInterpreterPath": "/usr/local/bin/python",
+        "python.formatting.provider": "black",
+        "python.linting.enabled": true,
+        "python.linting.pylintEnabled": true,
+        "[python]": {
+          "editor.formatOnSave": true,
+          "editor.defaultFormatter": "ms-python.black-formatter"
+        }
+      }
+    }
+  }
+}
